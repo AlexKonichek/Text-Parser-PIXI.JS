@@ -109,7 +109,7 @@ export default {
       selectOption1:',.0123456789',
       selectOption2:",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
       selectOption3:"abcdefghijklmnopqrstuvwxyz",
-      canvasSize:0,
+      canvasSize:{},
       scale:1,
       showError:false,
       maxWidthReady:false,

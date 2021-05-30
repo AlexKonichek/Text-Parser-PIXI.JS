@@ -71,17 +71,22 @@ export default {
     renderSymbols() {
       while(this.app.stage.children[0]) { this.app.stage.removeChild(this.app.stage.children[0]); }
       let spritesheetWrapper = new PIXI.Container()
+      let spriteSheetBorder = new PIXI.Graphics();
+        spriteSheetBorder.lineStyle(2, 0x000000, 1);
+        spriteSheetBorder.drawRect(0, 0, this.canvasSize.w, this.canvasSize.h);
+        spriteSheetBorder.endFill();
+        spriteSheetBorder.x = 0;
+        spriteSheetBorder.y = 0;
+        spritesheetWrapper.addChild(spriteSheetBorder)
       this.app.stage.addChild(spritesheetWrapper);
       this.textures.forEach((texture,i) => {
-
+        console.log(this.canvasSize.width, this.canvasSize.height)
         let sprite = PIXI.Sprite.from(texture);
         let container = new PIXI.Container()
         let spriteBorder = new PIXI.Graphics();
-      /* let spriteX = this.coordinatesArr[i].x
-        let spriteY = this.coordinatesArr[i].y*/
+      
         sprite.width = sprite.texture.orig.width
         sprite.height = sprite.texture.orig.height
-        //sprite.position.x = (sprite.width*i+this.shiftX)
         spriteBorder.lineStyle(2, 0xFF3300, 1);
         spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
         spriteBorder.endFill();
@@ -95,9 +100,6 @@ export default {
 
         spritesheetWrapper.addChild(container)
         this.sprites.push(sprite)
-        /*console.log(`iteration ${i}:
-        sprite.width|:${sprite.width}
-        container.position.x:${container.position.x}`)*/
       })
     }
   }
