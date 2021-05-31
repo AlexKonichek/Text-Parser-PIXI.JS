@@ -1,0 +1,32 @@
+<font>
+	<info face="D:\room315\8Immortals\ja_JP_letters-export" size="267" />
+	<common lineHeight="267" scaleW="1024" scaleH="1024" pages="1" />
+	<pages>
+		<page id="0" file="D:\room315\8Immortals\ja_JP_letters-export.png" />
+	</pages>
+	<chars count="21">
+		<char id="12451" x="573" y="322" width="139" height="156" xoffset="0" yoffset="105" xadvance="158" /><!-- ィ -->
+		<char id="12454" x="571" y="504" width="160" height="197" xoffset="0" yoffset="68" xadvance="179" /><!-- ウ -->
+		<char id="12456" x="209" y="0" width="189" height="150" xoffset="0" yoffset="93" xadvance="208" /><!-- エ -->
+		<char id="12460" x="207" y="820" width="189" height="198" xoffset="0" yoffset="66" xadvance="208" /><!-- ガ -->
+		<char id="12463" x="404" y="617" width="166" height="200" xoffset="0" yoffset="67" xadvance="185" /><!-- ク -->
+		<char id="12464" x="207" y="617" width="196" height="202" xoffset="0" yoffset="82" xadvance="215" /><!-- グ -->
+		<char id="12473" x="209" y="151" width="187" height="169" xoffset="0" yoffset="105" xadvance="206" /><!-- ス -->
+		<char id="12483" x="399" y="0" width="145" height="144" xoffset="0" yoffset="134" xadvance="164" /><!-- ッ -->
+		<char id="12497" x="0" y="827" width="195" height="165" xoffset="0" yoffset="92" xadvance="214" /><!-- パ -->
+		<char id="12499" x="565" y="818" width="163" height="186" xoffset="0" yoffset="81" xadvance="182" /><!-- ビ -->
+		<char id="12500" x="407" y="322" width="165" height="181" xoffset="0" yoffset="66" xadvance="184" /><!-- ピ -->
+		<char id="12513" x="397" y="820" width="167" height="190" xoffset="0" yoffset="67" xadvance="186" /><!-- メ -->
+		<char id="12531" x="397" y="151" width="176" height="170" xoffset="0" yoffset="76" xadvance="195" /><!-- ン -->
+		<char id="12540" x="209" y="321" width="181" height="56" xoffset="0" yoffset="136" xadvance="200" /><!-- ー -->
+		<char id="21033" x="207" y="411" width="199" height="205" xoffset="0" yoffset="62" xadvance="218" /><!-- 利 -->
+		<char id="21213" x="0" y="202" width="208" height="208" xoffset="0" yoffset="59" xadvance="227" /><!-- 勝 -->
+		<char id="21512" x="0" y="411" width="206" height="207" xoffset="0" yoffset="60" xadvance="225" /><!-- 合 -->
+		<char id="35336" x="0" y="619" width="206" height="207" xoffset="0" yoffset="59" xadvance="225" /><!-- 計 -->
+		<char id="37329" x="0" y="0" width="208" height="201" xoffset="0" yoffset="60" xadvance="227" /><!-- 金 -->
+		<char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="126" /><!--   -->
+		<char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="1008" /><!-- 	 -->
+	</chars>
+	<kernings count="0">
+	</kernings>
+</font>

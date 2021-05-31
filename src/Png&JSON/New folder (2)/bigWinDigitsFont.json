@@ -1,0 +1,108 @@
+{"frames": {
+
+"comma.png":
+{
+	"frame": {"x":31,"y":31,"w":58,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":138},
+	"sourceSize": {"w":45,"h":134}
+},
+"dot.png":
+{
+	"frame": {"x":111,"y":31,"w":58,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":138},
+	"sourceSize": {"w":40,"h":134}
+},
+"num_0.png":
+{
+	"frame": {"x":191,"y":31,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":92,"h":134}
+},
+"num_1.png":
+{
+	"frame": {"x":311,"y":31,"w":58,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":58,"h":138},
+	"sourceSize": {"w":52,"h":134}
+},
+"num_2.png":
+{
+	"frame": {"x":391,"y":31,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":79,"h":134}
+},
+"num_3.png":
+{
+	"frame": {"x":31,"y":191,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":80,"h":134}
+},
+"num_4.png":
+{
+	"frame": {"x":151,"y":191,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":81,"h":134}
+},
+"num_5.png":
+{
+	"frame": {"x":271,"y":191,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":85,"h":134}
+},
+"num_6.png":
+{
+	"frame": {"x":391,"y":191,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":92,"h":134}
+},
+"num_7.png":
+{
+	"frame": {"x":31,"y":351,"w":78,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":138},
+	"sourceSize": {"w":78,"h":134}
+},
+"num_8.png":
+{
+	"frame": {"x":131,"y":351,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":97,"h":134}
+},
+"num_9.png":
+{
+	"frame": {"x":251,"y":351,"w":98,"h":138},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":138},
+	"sourceSize": {"w":86,"h":134}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "bigWinDigitsFont.png",
+	"format": "RGBA8888",
+	"size": {"w":520,"h":520},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2db9b8cc265ebf3254ec09ecd6e0a1a5:2dfbe32ecd056a237de86b69aab4887d:d82ebc841cd0a13bb321d88b9be18ff3$"
+}
+}
