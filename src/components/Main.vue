@@ -112,6 +112,8 @@
               :coordinatesArr="coordinatesArr"
               :canvasSize="canvasSize"
               :showBorderCheckbox="checkedSpriteBorder"
+              :frameW="framesWidths"
+              :frameH="framesHeights"
           />
         </div>
       </div>
@@ -170,6 +172,8 @@ export default {
       showShiftX:false,
       showTextArea:false,
       symbolsArr:[],
+      sourceSizeW:0,
+      sourceSizeH:0,
       readyToRender:false,
       framesArr: [],
       framesNames: [],
@@ -350,7 +354,7 @@ export default {
           this.dotXAdvance = this.maxDotWidth + Number(this.changeXAdvance)
           this.yadvance = frame.h + Number(this.changeYAdvance)*/
         }else{
-          this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
+          this.xadvance = Number(this.maxSymbolWidth || this.maxSymbolWidthFromJSON) + Number(this.changeXAdvance)
           this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
         }
 
@@ -370,9 +374,10 @@ export default {
         </font>`
         console.log(this.xadvance,xoffset)
         }
-    }
+
   }
 }
+
 </script>
 
 <style>

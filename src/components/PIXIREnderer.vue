@@ -27,7 +27,7 @@ export default {
   props: ['json','charCodeArr','render', 'scale','shiftX',
            'maxWidth', 'image','coordinatesArr','canvasSize',
           'changeXAdvance','letterSpasing','showBorderCheckbox',
-          'changeYAdvance'],
+          'changeYAdvance','frameW','frameH'],
   mounted() {
     this.drawPixi()
     this.parse()
@@ -131,6 +131,9 @@ export default {
           let spriteBorder = new PIXI.Graphics();
           sprite.width = sprite.texture.orig.width
           sprite.height = sprite.texture.orig.height
+          console.log(this.frameW[0],this.frameH[0] )
+          //sprite.width = this.frameW[0]
+          //sprite.height = this.frameH[0]
           spriteBorder.lineStyle(2, 0xFF3300, 1);
           spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
           spriteBorder.endFill();
