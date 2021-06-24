@@ -1,4 +1,4 @@
-# perser
+# text parser for pixi.js based games
 
 ## Project setup
 ```

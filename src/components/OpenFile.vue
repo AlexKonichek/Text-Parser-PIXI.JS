@@ -13,7 +13,7 @@
       </div>
     </div>
     <div v-if="showError" class="alert alert-danger" role="alert">
-               Choose only 2 files: JSON and PNG!
+      You must choose 2 files: JSON and PNG!
     </div>
   </div>
 
@@ -35,6 +35,7 @@ export default {
       if(fileListAsArray.length!==2) {
         this.showError = true
       }else{
+        this.showError = false
         fileListAsArray.forEach(file => {
         if(file.type === "application/json") {
           jsonfile=file
