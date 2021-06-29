@@ -49,6 +49,18 @@
                   type="number"
               >
             </div>
+            <label class="text-white h4" for="XAdvanceSmall">Small symbol XAdvance</label>
+            <div class="input-group input-group-lg m-3">
+              <input
+                  id="XAdvanceSmall"
+                  class="form-control mr-3"
+                  ref="XAdvance"
+                  v-model="maxSmallSymbolWidthModel"
+                  step="1"
+                  min="1"
+                  type="number"
+              >
+            </div>
 
             <div v-if="checkedLetterSpasing">
               <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
@@ -157,6 +169,7 @@ export default {
       changeXAdvance:0,
       changeYAdvance:0,
       coordinatesArr: [],
+      comaAndDotWidthsArr: [],
       canvasSize:{},
       currentXAdvance:0,
       dotXAdvance:0,
@@ -184,7 +197,9 @@ export default {
       inputSymbols: ",.0123456789",
       maxWidth: 1,
       maxSymbolWidthFromJSON:0,
+      maxSmallSymbolWidthFromJSON:0,
       maxSymbolWidth: undefined,
+      maxSmallSymbolWidth: undefined,
       maxWidthReady:false,
       font:'font family',
       JSONFile:{},
@@ -262,9 +277,18 @@ export default {
         this.maxSymbolWidth = value;
         console.log(value, this.maxSymbolWidth);
       },
-
       get() {
         return this.maxSymbolWidth !== undefined? this.maxSymbolWidth : this.maxSymbolWidthFromJSON;
+      }
+    },
+    maxSmallSymbolWidthModel: {
+      set(value) {
+        this.maxSmallSymbolWidth = value;
+        console.log(value, this.maxSmallSymbolWidth);
+      },
+
+      get() {
+        return this.maxSmallSymbolWidth !== undefined? this.maxSmallSymbolWidth : this.maxSmallSymbolWidthFromJSON;
       }
     }
 
@@ -278,7 +302,7 @@ export default {
       return Math.max(...this.framesWidths)
     },
     getMaxSmallSymbolWidthFromJSON () {
-      return Math.min(...this.framesWidths)
+      return Math.max(...this.comaAndDotWidthsArr)
     },
 
     xAdvanceInputHandler(e){
@@ -351,32 +375,40 @@ export default {
     <page id="0" file="${this.font}.png" />
   </pages>
   <chars count="${this.framesArr.length}">\n`
-      let comaAndDotWidthsArr = []
+
       this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
       this.framesArr.forEach(({frame,sourceSize}, index) => {
-        //fill coordinates array for rendering
-        let coordinates = {x:frame.x, y:frame.y}
-        this.coordinatesArr.push(coordinates)
-        //define xadvance for dot,comma or similar small symbol
-        if(this.symbolsArr[index]==="." || this.symbolsArr[index] === ',') {
-          comaAndDotWidthsArr.push((sourceSize.w))
-          this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
-          this.xadvance = this.maxSmallSymbolWidth + Number(this.changeXAdvance)
-          this.yadvance = frame.h + Number(this.changeYAdvance)
-        }
-        //define xadvance for plain symbols
-        else{
-          if(!this.maxSymbolWidth){
-            this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
-          }else{
-            this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
-          }
-        }
+            //fill coordinates array for rendering
+            let coordinates = {x:frame.x, y:frame.y}
+            this.coordinatesArr.push(coordinates)
+            //define xadvance for dot,comma or similar small symbol
+            if(this.symbolsArr[index]==="." || this.symbolsArr[index] === ',') {
+              this.comaAndDotWidthsArr.push((sourceSize.w))
+              //this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
+              if(!this.maxSmallSymbolWidth){
+                this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
+              }else{
+                this.xadvance = Number(this.maxSmallSymbolWidth)
+              }
+              console.log(this.xadvance)
 
-        yoffset = (this.yadvance-sourceSize.h)/2
-        xoffset = (Number(this.xadvance)-sourceSize.w)/2
-        let row =  `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.symbolsArr[index]} -->\n`
-            this.XMLText += row
+
+              this.yadvance = frame.h + Number(this.changeYAdvance)
+
+            }
+            //define xadvance for plain symbols
+            else{
+              if(!this.maxSymbolWidth){
+                this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
+              }else{
+                this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
+              }
+            }
+
+            yoffset = (this.yadvance-sourceSize.h)/2
+            xoffset = (Number(this.xadvance)-sourceSize.w)/2
+            let row =  `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.symbolsArr[index]} -->\n`
+                this.XMLText += row
       })
       this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--   -->\n`
       this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--       -->\n`
