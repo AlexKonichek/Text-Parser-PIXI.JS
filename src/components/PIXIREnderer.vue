@@ -17,7 +17,7 @@ export default {
       rotation: 0,
       //width: 1800,
       //height: 800,
-      backgroundColor: 0xffffff,
+      backgroundColor: 0xFF0000,
       resolution: 1,
       position: 1,
       x: 0,
@@ -62,6 +62,7 @@ export default {
         transparent: true,
         view: canvas,
       })
+      this.app.renderer.backgroundColor = 0x061639
 
     },
 
@@ -131,7 +132,6 @@ export default {
           let spriteBorder = new PIXI.Graphics();
           sprite.width = sprite.texture.orig.width
           sprite.height = sprite.texture.orig.height
-          console.log(this.frameW[0],this.frameH[0] )
           //sprite.width = this.frameW[0]
           //sprite.height = this.frameH[0]
           spriteBorder.lineStyle(2, 0xFF3300, 1);

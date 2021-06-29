@@ -20,8 +20,8 @@
               </div>
             </div>
             <label  class="label text-white h4" for="Select">Choose symbols set</label>
-            <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols">
-              <option :value="this.selectOption1">{{ this.selectOption1 }}</option>
+            <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="selectHandler" >
+              <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
               <option>{{ this.selectOption2 }}</option>
               <option>{{ this.selectOption3 }}</option>
               <option>{{ this.selectOption4 }}</option>
@@ -37,7 +37,7 @@
                   required
               >
             </div>
-            <label class="text-white h4" for="XAdvance">XAdvance</label>
+            <label class="text-white h4" for="XAdvance">General XAdvance</label>
             <div class="input-group input-group-lg m-3">
               <input
                   id="XAdvance"
@@ -49,6 +49,7 @@
                   type="number"
               >
             </div>
+
             <div v-if="checkedLetterSpasing">
               <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
               <div class="input-group input-group-lg m-3">
@@ -185,7 +186,6 @@ export default {
       maxSymbolWidthFromJSON:0,
       maxSymbolWidth: undefined,
       maxWidthReady:false,
-      maxDotWidth:0,
       font:'font family',
       JSONFile:{},
       JSONtext: '',
@@ -205,6 +205,7 @@ export default {
       //this.showRenderButton = true
       this.submitHandler()
       this.maxSymbolWidthFromJSON = this.getMaxSymbolWidthFromJSON()
+      this.maxSmallSymbolWidthFromJSON = this.getMaxSmallSymbolWidthFromJSON()
       this.showTextArea = true
     },
 
@@ -218,6 +219,10 @@ export default {
 
     maxSymbolWidth: function () {
       console.log('maxSymbolWidth')
+      this.JSON2XML()
+    },
+    maxSmallSymbolWidth: function () {
+      console.log('maxSmallSymbolWidth',this.maxSmallSymbolWidth)
       this.JSON2XML()
     },
 
@@ -255,7 +260,7 @@ export default {
     maxSymbolWidthModel: {
       set(value) {
         this.maxSymbolWidth = value;
-        //console.log(value, this.maxSymbolWidth);
+        console.log(value, this.maxSymbolWidth);
       },
 
       get() {
@@ -266,15 +271,19 @@ export default {
   },
 
   methods: {
+    selectHandler () {
+      this.submitHandler()
+    },
     getMaxSymbolWidthFromJSON () {
       return Math.max(...this.framesWidths)
+    },
+    getMaxSmallSymbolWidthFromJSON () {
+      return Math.min(...this.framesWidths)
     },
 
     xAdvanceInputHandler(e){
       console.log('xAdvanceInputHandler')
-      console.log(e.target.value)
       this.currentXAdvance = e.target.value
-      console.log(this.currentXAdvance)
       this.JSON2XML()
     },
 
@@ -298,7 +307,7 @@ export default {
 
       //input validation
       if(ArrInputValues.length>0 && ArrInputValues.length !== this.symbolsArr.length){
-        this.showError = true
+      //this.showError = true
       }
       else {
         this.readyToRender = true;
@@ -310,7 +319,7 @@ export default {
       }
 
       this.JSON2XML();
-      //this.getMaxSymbolWidthFromJSON()
+
     },
 
     createXML:function () {
@@ -330,7 +339,8 @@ export default {
     JSON2XML(){
       console.log("JSON2XML")
       let yoffset,
-          xoffset
+          xoffset;
+      this.xadvance = this.getMaxSymbolWidthFromJSON()
       this.XMLText = `
 
 <font>
@@ -342,23 +352,26 @@ export default {
   </pages>
   <chars count="${this.framesArr.length}">\n`
       let comaAndDotWidthsArr = []
+      this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
       this.framesArr.forEach(({frame,sourceSize}, index) => {
         //fill coordinates array for rendering
         let coordinates = {x:frame.x, y:frame.y}
         this.coordinatesArr.push(coordinates)
-
+        //define xadvance for dot,comma or similar small symbol
         if(this.symbolsArr[index]==="." || this.symbolsArr[index] === ',') {
-          /*comaAndDotWidthsArr.push((sourceSize.w))
-          this.maxDotWidth = Math.max(...comaAndDotWidthsArr)
-          this.comaXAdvance = this.maxDotWidth + Number(this.changeXAdvance)
-          this.dotXAdvance = this.maxDotWidth + Number(this.changeXAdvance)
-          this.yadvance = frame.h + Number(this.changeYAdvance)*/
-        }else{
-          this.xadvance = Number(this.maxSymbolWidth || this.maxSymbolWidthFromJSON) + Number(this.changeXAdvance)
-          this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
+          comaAndDotWidthsArr.push((sourceSize.w))
+          this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
+          this.xadvance = this.maxSmallSymbolWidth + Number(this.changeXAdvance)
+          this.yadvance = frame.h + Number(this.changeYAdvance)
         }
-
-
+        //define xadvance for plain symbols
+        else{
+          if(!this.maxSymbolWidth){
+            this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
+          }else{
+            this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
+          }
+        }
 
         yoffset = (this.yadvance-sourceSize.h)/2
         xoffset = (Number(this.xadvance)-sourceSize.w)/2
@@ -367,14 +380,11 @@ export default {
       })
       this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--   -->\n`
       this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--       -->\n`
-
       this.XMLText +=`  </chars>
         <kernings count="0">
         </kernings>
         </font>`
-        console.log(this.xadvance,xoffset)
         }
-
   }
 }
 
