@@ -9,11 +9,11 @@
     <div v-if="showImage">
       <h1>Image preview</h1>
       <div  class="card" style="width: 15rem">
-        <img ref="img" src="" class="card-img-top" alt="image preview">
+       <img ref="img" src="" class="card-img-top" alt="image preview">
       </div>
     </div>
     <div v-if="showError" class="alert alert-danger" role="alert">
-               Choose only 2 files: JSON and PNG!
+      You must choose 2 files: JSON and PNG!
     </div>
   </div>
 
@@ -35,6 +35,7 @@ export default {
       if(fileListAsArray.length!==2) {
         this.showError = true
       }else{
+        this.showError = false
         fileListAsArray.forEach(file => {
         if(file.type === "application/json") {
           jsonfile=file
@@ -46,11 +47,10 @@ export default {
         }
         if(file.type ==="image/png") {
           imageFile=file
-          this.showImage=true
+          //this.showImage=true
           let reader = new FileReader();
           reader.onload = e => {
             this.$emit("image", reader.result);
-            this.$refs.img.src = reader.result;
             this.showOpenFile=false
 
           }
@@ -60,7 +60,7 @@ export default {
        this.$emit("json",jsonfile)
 
       }
-      
+     
 
      
       

@@ -15,8 +15,8 @@ export default {
       sprites:[],
       textures:[],
       rotation: 0,
-      width: 1800,
-      height: 1800,
+      //width: 1800,
+      //height: 800,
       backgroundColor: 0xffffff,
       resolution: 1,
       position: 1,
@@ -24,35 +24,49 @@ export default {
       y: 0
     }
   },
-  props: ['json','charCodeArr','render', 'scale','shiftX','maxWidth', 'image','coordinatesArr','canvasSize'],
+  props: ['json','charCodeArr','render', 'scale','shiftX',
+            'image','coordinatesArr','canvasSize',
+          'changeXAdvance','letterSpasing','showBorderCheckbox',
+          'changeYAdvance'],
   mounted() {
     this.drawPixi()
     this.parse()
 
   },
   watch:{
-    /*render:function () {
-      this.parse()
-    },*/
+    showBorderCheckbox: function () {
+      this.renderSymbols()
+    },
+    changeXAdvance: function () {
+      this.renderSymbols()
+    },
+    maxWidth: function () {
+      this.renderSymbols()
+    },
+    changeYAdvance: function () {
+      this.renderSymbols()
+   },
 
+    letterSpasing: function () {
+      this.renderSymbols()
+    },
     scale: function () {
       this.renderSymbols()
-    },
-    shiftX: function () {
-      this.renderSymbols()
-    },
+    }
   },
   methods: {
     drawPixi() {
       let canvas = document.getElementById('pixi')
       this.app = new PIXI.Application({
-        width: this.width,
-        height: this.height,
+        width: this.canvasSize.w,
+        height: this.canvasSize.h,
         antialias: true,
         transparent: true,
         view: canvas,
       })
+
     },
+
     parse() {
       let atlas = JSON.parse(this.json)
       let loader = this.app.loader;
@@ -66,7 +80,6 @@ export default {
           this.renderSymbols()
         });
       })
-
     },
     renderSymbols() {
       while(this.app.stage.children[0]) { this.app.stage.removeChild(this.app.stage.children[0]); }
@@ -78,29 +91,64 @@ export default {
         spriteSheetBorder.x = 0;
         spriteSheetBorder.y = 0;
         spritesheetWrapper.addChild(spriteSheetBorder)
-      this.app.stage.addChild(spritesheetWrapper);
-      this.textures.forEach((texture,i) => {
-        console.log(this.canvasSize.width, this.canvasSize.height)
-        let sprite = PIXI.Sprite.from(texture);
-        let container = new PIXI.Container()
-        let spriteBorder = new PIXI.Graphics();
-      
-        sprite.width = sprite.texture.orig.width
-        sprite.height = sprite.texture.orig.height
-        spriteBorder.lineStyle(2, 0xFF3300, 1);
-        spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
-        spriteBorder.endFill();
-        spriteBorder.x = sprite.position.x;
-        spriteBorder.y = sprite.position.y;
-        container.addChild(spriteBorder)
-        container.addChild(sprite)
-        container.position.x = this.coordinatesArr[i].x * this.scale
-        container.position.y = this.coordinatesArr[i].y * this.scale
+        this.app.stage.addChild(spritesheetWrapper);
+
+        //letter spasing mode
+       if(this.letterSpasing) {
+        this.textures.forEach((texture,i) => {
+            if(i>1){ return }
+            else{
+              let container = new PIXI.Container()
+              let sprite = PIXI.Sprite.from(texture);
+              let spriteBorder = new PIXI.Graphics();
+              let line1 = new PIXI.Graphics();
+              line1.lineStyle(2, 0x000000)
+                  .moveTo(-300, sprite.height)
+                  .lineTo(this.canvasSize.w, sprite.height);
+              let line2 = new PIXI.Graphics();
+              line1.lineStyle(2, 0x000000)
+                  .moveTo(-300, sprite.height*2)
+                  .lineTo(this.canvasSize.w, sprite.height*2);
+
+              spriteBorder.lineStyle(2, 0xFF3300, 1);
+              spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
+              spriteBorder.endFill();
+              container.addChild(sprite)
+              container.position.x = 200+sprite.width*i+Number(this.changeXAdvance*(i+1))
+              container.position.y = sprite.height+Number(this.changeYAdvance)
+              this.app.stage.addChild(container)
+              if(this.showBorderCheckbox) {
+                container.addChild(spriteBorder)
+                this.app.stage.addChild(line1)
+                this.app.stage.addChild(line2)
+              }
+            }
+         })
+      }
+       //ussual render mode
+      else{
+        this.textures.forEach((texture,i) => {
+          let sprite = PIXI.Sprite.from(texture);
+          let container = new PIXI.Container()
+          let spriteBorder = new PIXI.Graphics();
+          sprite.width = sprite.texture.orig.width
+          sprite.height = sprite.texture.orig.height
+          spriteBorder.lineStyle(2, 0xFF3300, 1);
+          spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
+          spriteBorder.endFill();
+          spriteBorder.x = sprite.position.x;
+          spriteBorder.y = sprite.position.y;
+          container.addChild(sprite)
+          container.position.x = this.coordinatesArr[i].x * this.scale
+          container.position.y = this.coordinatesArr[i].y * this.scale
+          spritesheetWrapper.addChild(container)
+          if(this.showBorderCheckbox) {
+            container.addChild(spriteBorder)
+          }
+        })
+      }
 
 
-        spritesheetWrapper.addChild(container)
-        this.sprites.push(sprite)
-      })
     }
   }
 }
