@@ -115,10 +115,11 @@
                     @json="JSONFile = $event"
                     @image="image = $event"
           ></OpenFile>
-
+          <errorMessage />
           <PIXIRenderer
-              v-if="readyToRender"
+              v-if="showPIXIRenderer"
               ref='PIXIRenderer'
+               @error="handleRendererError"
               :render="readyToRender"
               :changeXAdvance="changeXAdvance"
               :changeYAdvance="changeYAdvance"
@@ -159,10 +160,11 @@
 <script>
 import OpenFile from "./OpenFile";
 import PIXIRenderer from "./PIXIREnderer";
+import errorMessage from "./errorMessage.vue"
 
 
 export default {
-  components: { PIXIRenderer, OpenFile},
+  components: { PIXIRenderer, OpenFile, errorMessage},
   data () {
    return {
       comaOrDotExist:false,
@@ -179,6 +181,7 @@ export default {
       currentXAdvance:0,
       dotXAdvance:0,
       comaXAdvance:0,
+      errorMessageRender:false,
       selectOption1:',.0123456789',
       selectOption2:',.×0123456789',
       selectOption3:",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
@@ -186,6 +189,7 @@ export default {
       selectOption5:"abcdefghijklmnopqrstuvwxyz",
       scale:1,
       showError:false,
+      showPIXIRenderer:false,
       showRenderButton:false,
       showBorderCheckbox:false,
       showLetterSpacingModeCheckbox:false,
@@ -228,6 +232,7 @@ export default {
       this.maxSymbolWidthFromJSON = this.getMaxSymbolWidthFromJSON()
       this.maxSmallSymbolWidthFromJSON = this.getMaxSmallSymbolWidthFromJSON()
       this.showTextArea = true
+      this.showPIXIRenderer = true
     },
 
     changeXAdvance:function () {
@@ -294,6 +299,11 @@ export default {
   },
 
   methods: {
+    handleRendererError (){
+      this.showPIXIRenderer = false
+      this.errorMessageRender = true
+      console.log(this.errorMessageRender)
+    },
     handleJson(e){
          this.JSONtext = e
     },

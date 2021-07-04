@@ -238,7 +238,7 @@
 	"image": "total_currency.png",
 	"format": "RGBA8888",
 	"size": {"w":860,"h":1460},
-	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b893cf151e78ec122f1cf068de38af1f:05d1371b04422071fbf1f2cfad5e2d53:8d7dd0504aec2198380c6fa1beb2aa7e$"
+	"scale": "1"
+	
 }
 }

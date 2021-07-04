@@ -29,9 +29,28 @@ export default {
           'changeXAdvance','letterSpasing','showBorderCheckbox',
           'changeYAdvance'],
   mounted() {
-    this.drawPixi()
-    this.parse()
+    try {
+      console.log(JSON.parse(this.json))
+    } catch (error) {
+      this.$modal.show('ErrorDialog'
+    )
 
+//       this.$modal.show('ErrorDialog', {
+//   title: 'OOOPS!',
+//   text: 'It seems some error occurred...Please refresh the page and try once more',
+//   buttons: [
+//     {
+//       title: 'Refresh',
+//       handler: () => {
+//         location.reload();
+//         this.$modal.hide('dialog')
+//       }
+//     },
+//   ]
+// })
+
+      
+    }
   },
   watch:{
     showBorderCheckbox: function () {
@@ -68,7 +87,15 @@ export default {
     },
 
     parse() {
-      let atlas = JSON.parse(this.json)
+      
+      let atlas
+      if(this.json!==""){
+         atlas = JSON.parse(this.json)
+      }else{
+        console.log("json is not valid")
+        return
+      }
+    
       let loader = this.app.loader;
       let png = this.image
       loader.add(png).load(() => {
