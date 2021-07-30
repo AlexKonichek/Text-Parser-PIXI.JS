@@ -10,7 +10,7 @@
 },
 "lett-b.png":
 {
-	"frame": {"x":101,"y":1,"w":98,"h":198},
+	"frame": {"x":121,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -18,7 +18,7 @@
 },
 "lett-c.png":
 {
-	"frame": {"x":201,"y":1,"w":98,"h":198},
+	"frame": {"x":241,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -26,7 +26,7 @@
 },
 "lett-d.png":
 {
-	"frame": {"x":301,"y":1,"w":98,"h":198},
+	"frame": {"x":361,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -34,7 +34,7 @@
 },
 "lett-e.png":
 {
-	"frame": {"x":401,"y":1,"w":98,"h":198},
+	"frame": {"x":481,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -42,7 +42,7 @@
 },
 "lett-f.png":
 {
-	"frame": {"x":501,"y":1,"w":98,"h":198},
+	"frame": {"x":601,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -50,7 +50,7 @@
 },
 "lett-g.png":
 {
-	"frame": {"x":601,"y":1,"w":98,"h":198},
+	"frame": {"x":721,"y":1,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -58,7 +58,7 @@
 },
 "lett-h.png":
 {
-	"frame": {"x":701,"y":1,"w":98,"h":198},
+	"frame": {"x":1,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -66,7 +66,7 @@
 },
 "lett-i.png":
 {
-	"frame": {"x":1,"y":201,"w":98,"h":198},
+	"frame": {"x":121,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -74,7 +74,7 @@
 },
 "lett-j.png":
 {
-	"frame": {"x":101,"y":201,"w":98,"h":198},
+	"frame": {"x":241,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -82,7 +82,7 @@
 },
 "lett-k.png":
 {
-	"frame": {"x":201,"y":201,"w":98,"h":198},
+	"frame": {"x":361,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -90,7 +90,7 @@
 },
 "lett-l.png":
 {
-	"frame": {"x":301,"y":201,"w":98,"h":198},
+	"frame": {"x":481,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -98,7 +98,7 @@
 },
 "lett-m.png":
 {
-	"frame": {"x":401,"y":201,"w":98,"h":198},
+	"frame": {"x":601,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -106,7 +106,7 @@
 },
 "lett-n.png":
 {
-	"frame": {"x":501,"y":201,"w":98,"h":198},
+	"frame": {"x":721,"y":221,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -114,7 +114,7 @@
 },
 "lett-o.png":
 {
-	"frame": {"x":601,"y":201,"w":98,"h":198},
+	"frame": {"x":1,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -122,7 +122,7 @@
 },
 "lett-p.png":
 {
-	"frame": {"x":701,"y":201,"w":98,"h":198},
+	"frame": {"x":121,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -130,7 +130,7 @@
 },
 "lett-q.png":
 {
-	"frame": {"x":1,"y":401,"w":98,"h":198},
+	"frame": {"x":241,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -138,7 +138,7 @@
 },
 "lett-r.png":
 {
-	"frame": {"x":101,"y":401,"w":98,"h":198},
+	"frame": {"x":361,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -146,7 +146,7 @@
 },
 "lett-s.png":
 {
-	"frame": {"x":201,"y":401,"w":98,"h":198},
+	"frame": {"x":481,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -154,7 +154,7 @@
 },
 "lett-t.png":
 {
-	"frame": {"x":301,"y":401,"w":98,"h":198},
+	"frame": {"x":601,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -162,7 +162,7 @@
 },
 "lett-u.png":
 {
-	"frame": {"x":401,"y":401,"w":98,"h":198},
+	"frame": {"x":721,"y":441,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -170,7 +170,7 @@
 },
 "lett-v.png":
 {
-	"frame": {"x":501,"y":401,"w":98,"h":198},
+	"frame": {"x":1,"y":661,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -178,7 +178,7 @@
 },
 "lett-w.png":
 {
-	"frame": {"x":601,"y":401,"w":98,"h":198},
+	"frame": {"x":121,"y":661,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -186,7 +186,7 @@
 },
 "lett-x.png":
 {
-	"frame": {"x":701,"y":401,"w":98,"h":198},
+	"frame": {"x":241,"y":661,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -194,7 +194,7 @@
 },
 "lett-y.png":
 {
-	"frame": {"x":1,"y":601,"w":98,"h":198},
+	"frame": {"x":361,"y":661,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -202,7 +202,7 @@
 },
 "lett-z.png":
 {
-	"frame": {"x":101,"y":601,"w":98,"h":198},
+	"frame": {"x":481,"y":661,"w":98,"h":198},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":198},
@@ -213,8 +213,8 @@
 	"version": "1.0",
 	"image": "bigWinCurrencyFont.png",
 	"format": "RGBA8888",
-	"size": {"w":800,"h":800},
+	"size": {"w":860,"h":860},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:6381fa1621f75c08e7a276285aa67131:302734c6d1145e952d3c2c434e8059e9:1613a4d6ef99522fa7a7765bc43a425a$"
+	"smartupdate": "$TexturePacker:SmartUpdate:6b8fc47d18ee249fa4bd5b3c8b071e91:302734c6d1145e952d3c2c434e8059e9:1613a4d6ef99522fa7a7765bc43a425a$"
 }
 }

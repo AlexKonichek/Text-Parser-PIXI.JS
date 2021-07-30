@@ -106,8 +106,7 @@
         </div>
         <div class="col-sm-8 bg-light ml-3">
           <OpenFile v-if="!readyToRender"
-                    @load="JSONtext = $event"
-                    @json="JSONFile = $event"
+                    @json="JSONtext = $event"
                     @image="image = $event"
           ></OpenFile>
 
@@ -157,91 +156,80 @@ import OpenFile from "./OpenFile";
 import PIXIRenderer from "./PIXIREnderer";
 
 export default {
-  components: { PIXIRenderer, OpenFile},
-  data () {
+  components: {PIXIRenderer, OpenFile},
+  data() {
     return {
-      comaOrDotExist:false,
-      showLetterSpacing:false,
+      comaOrDotExist: false,
+      showLetterSpacing: false,
       checkedLetterSpasing: false,
-      checkedSpriteBorder:false,
-      charCodesAndNamesArr:[],
-      charCodeArr:[],
-      changeXAdvance:0,
-      changeYAdvance:0,
+      checkedSpriteBorder: false,
+      charCodesAndNamesArr: [],
+      charCodeArr: [],
+      changeXAdvance: 0,
+      changeYAdvance: 0,
       coordinatesArr: [],
       comaAndDotWidthsArr: [],
-      canvasSize:{},
-      currentXAdvance:0,
-      dotXAdvance:0,
-      comaXAdvance:0,
-      selectOption1:',.0123456789',
-      selectOption2:",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
-      selectOption3:"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      selectOption4:"abcdefghijklmnopqrstuvwxyz",
-      scale:1,
-      showError:false,
-      showRenderButton:false,
-      showBorderCheckbox:false,
-      showLetterSpacingModeCheckbox:false,
-      showShiftX:false,
-      showTextArea:false,
-      symbolsArr:[],
-      sourceSizeW:0,
-      sourceSizeH:0,
-      readyToRender:false,
+      canvasSize: {},
+      currentXAdvance: 0,
+      dotXAdvance: 0,
+      comaXAdvance: 0,
+      selectOption1: ',.0123456789',
+      selectOption2: ",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
+      selectOption3: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      selectOption4: "abcdefghijklmnopqrstuvwxyz",
+      scale: 1,
+      showError: false,
+      showRenderButton: false,
+      showBorderCheckbox: false,
+      showLetterSpacingModeCheckbox: false,
+      showShiftX: false,
+      showTextArea: false,
+      symbolsArr: [],
+      sourceSizeW: 0,
+      sourceSizeH: 0,
+      readyToRender: false,
       framesArr: [],
       framesNames: [],
-      framesWidths:[],
-      framesHeights:[],
+      framesWidths: [],
+      framesHeights: [],
       t: 0,
       inputSymbols: ",.0123456789",
       maxWidth: 1,
-      maxSymbolWidthFromJSON:0,
-      maxSmallSymbolWidthFromJSON:0,
+      maxSymbolWidthFromJSON: 0,
+      maxSmallSymbolWidthFromJSON: 0,
       maxSymbolWidth: undefined,
       maxSmallSymbolWidth: undefined,
-      maxWidthReady:false,
-      font:'font family',
-      JSONFile:{},
+      maxWidthReady: false,
+      font: 'font family',
+      JSONFile: {},
       JSONtext: '',
-      image:{},
-      XMLText:'',
-      XMLFileName:'',
-      xadvance:0,
-      xoffset:0,
-      yoffset:0,
-      yadvance:0,
+      image: {},
+      XMLText: '',
+      XMLFileName: '',
+      xadvance: 0,
+      xoffset: 0,
+      yoffset: 0,
+      yadvance: 0,
 
     }
   },
 
   watch: {
-    image:function () {
-      //this.showRenderButton = true
-      this.submitHandler()
-      this.maxSymbolWidthFromJSON = this.getMaxSymbolWidthFromJSON()
-      this.maxSmallSymbolWidthFromJSON = this.getMaxSmallSymbolWidthFromJSON()
-      this.showTextArea = true
-    },
-
-    changeXAdvance:function () {
+    changeXAdvance: function () {
       this.JSON2XML()
     },
 
-    changeYAdvance:function () {
+    changeYAdvance: function () {
       this.JSON2XML()
     },
-
     maxSymbolWidth: function () {
-      console.log('maxSymbolWidth')
       this.JSON2XML()
     },
     maxSmallSymbolWidth: function () {
-      console.log('maxSmallSymbolWidth',this.maxSmallSymbolWidth)
       this.JSON2XML()
     },
 
-    JSONtext:function () {
+    JSONtext: function () {
       let data = JSON.parse(this.JSONtext)
       let frames = Object.values(data)[0]
       this.canvasSize = Object.values(data)[1].size
@@ -257,83 +245,96 @@ export default {
       this.framesNames = Object.keys(frames)
       this.maxWidthReady = true
       this.$refs.inputSymbols.focus()
+      this.prepareToRender()
     },
 
-    charCodeArr:function () {
-      this.charCodeArr.forEach((charCode,i) => {
-        let charCodeAndName = {[charCode]:this.framesNames[i]}
+    charCodeArr: function () {
+      this.charCodeArr.forEach((charCode, i) => {
+        let charCodeAndName = {[charCode]: this.framesNames[i]}
         this.charCodesAndNamesArr.push(charCodeAndName)
       })
     },
   },
 
-  computed:{
-    maxSymbolHeightFromJSON(){
+  computed: {
+    maxSymbolHeightFromJSON() {
       return Math.max(...this.framesHeights)
     },
 
     maxSymbolWidthModel: {
       set(value) {
         this.maxSymbolWidth = value;
-        console.log(value, this.maxSymbolWidth);
+        //console.log(value, this.maxSymbolWidth);
       },
       get() {
-        return this.maxSymbolWidth !== undefined? this.maxSymbolWidth : this.maxSymbolWidthFromJSON;
+        return this.maxSymbolWidth !== undefined ? this.maxSymbolWidth : this.maxSymbolWidthFromJSON;
       }
     },
     maxSmallSymbolWidthModel: {
       set(value) {
         this.maxSmallSymbolWidth = value;
-        console.log(value, this.maxSmallSymbolWidth);
+        //console.log(value, this.maxSmallSymbolWidth);
       },
 
       get() {
-        return this.maxSmallSymbolWidth !== undefined? this.maxSmallSymbolWidth : this.maxSmallSymbolWidthFromJSON;
+        return this.maxSmallSymbolWidth !== undefined ? this.maxSmallSymbolWidth : this.maxSmallSymbolWidthFromJSON;
       }
     }
 
   },
 
   methods: {
-    selectHandler () {
-      this.submitHandler()
+    selectHandler() {
+      this.updateData()
+      this.prepareToRender()
+
     },
-    getMaxSymbolWidthFromJSON () {
+    updateData() {
+      this.comaAndDotWidthsArr = [],
+          this.coordinatesArr = [],
+          this.charCodeArr = [],
+          this.charCodesAndNamesArr = [],
+          this.symbolsArr = []
+    },
+
+    getMaxSymbolWidthFromJSON() {
       return Math.max(...this.framesWidths)
     },
-    getMaxSmallSymbolWidthFromJSON () {
+    getMaxSmallSymbolWidthFromJSON() {
       return Math.max(...this.comaAndDotWidthsArr)
     },
 
-    xAdvanceInputHandler(e){
+    xAdvanceInputHandler(e) {
       console.log('xAdvanceInputHandler')
       this.currentXAdvance = e.target.value
       this.JSON2XML()
     },
 
-    refreshPage () {
+    refreshPage() {
       location.reload();
     },
 
-    update (dt) {
+    update(dt) {
       this.t += dt
     },
 
-    submitHandler: function() {
+    prepareToRender: function () {
+      this.maxSymbolWidthFromJSON = this.getMaxSymbolWidthFromJSON()
+      this.maxSmallSymbolWidthFromJSON = this.getMaxSmallSymbolWidthFromJSON()
+      this.showTextArea = true
       let ArrInputValues = this.inputSymbols.split("");
-      ArrInputValues.forEach((item,i) => {
+      ArrInputValues.forEach((item, i) => {
         this.symbolsArr.push(item);
         this.charCodeArr.push(item.charCodeAt(0));
-        if(this.charCodeArr.includes(44) || this.charCodeArr.includes(46)) {
+        if (this.charCodeArr.includes(44) || this.charCodeArr.includes(46)) {
           this.comaOrDotExist = true
         }
       })
 
       //input validation
-      if(ArrInputValues.length>0 && ArrInputValues.length !== this.symbolsArr.length){
-      //this.showError = true
-      }
-      else {
+      if (ArrInputValues.length > 0 && ArrInputValues.length !== this.symbolsArr.length) {
+        //this.showError = true
+      } else {
         this.readyToRender = true;
         this.showError = false
         this.showShiftX = true
@@ -346,7 +347,7 @@ export default {
 
     },
 
-    createXML:function () {
+    createXML: function () {
       let xmltext = this.XMLText
       let name = this.XMLFileName.split('.')[0]
       let filename = `${name}.xml`;
@@ -360,66 +361,56 @@ export default {
       pom.click();
     },
 
-    JSON2XML(){
-      console.log("JSON2XML")
+    JSON2XML() {
       let yoffset,
           xoffset;
       this.xadvance = this.getMaxSymbolWidthFromJSON()
       this.XMLText = `
-
 <font>
-
   <info face="${this.font}" size="${this.framesHeights[0]}" />
   <common lineHeight="${this.framesHeights[0]}" scaleW="494" scaleH="479" pages="1" />
   <pages>
     <page id="0" file="${this.font}.png" />
   </pages>
   <chars count="${this.framesArr.length}">\n`
-
       this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
-      this.framesArr.forEach(({frame,sourceSize}, index) => {
-            //fill coordinates array for rendering
-            let coordinates = {x:frame.x, y:frame.y}
-            this.coordinatesArr.push(coordinates)
-            //define xadvance for dot,comma or similar small symbol
-            if(this.symbolsArr[index]==="." || this.symbolsArr[index] === ',') {
-              this.comaAndDotWidthsArr.push((sourceSize.w))
-              //this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
-              if(!this.maxSmallSymbolWidth){
-                this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
-              }else{
-                this.xadvance = Number(this.maxSmallSymbolWidth)
-              }
-              console.log(this.xadvance)
-
-
-              this.yadvance = frame.h + Number(this.changeYAdvance)
-
-            }
-            //define xadvance for plain symbols
-            else{
-              if(!this.maxSymbolWidth){
-                this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
-              }else{
-                this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
-              }
-            }
-
-            yoffset = (this.yadvance-sourceSize.h)/2
-            xoffset = (Number(this.xadvance)-sourceSize.w)/2
-            let row =  `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.symbolsArr[index]} -->\n`
-                this.XMLText += row
+      this.framesArr.forEach(({frame, sourceSize}, index) => {
+        //fill coordinates array for rendering
+        let coordinates = {x: frame.x, y: frame.y}
+        this.coordinatesArr.push(coordinates)
+        //define xadvance for dot,comma or similar small symbol
+        if (this.symbolsArr[index] === "." || this.symbolsArr[index] === ',') {
+          this.comaAndDotWidthsArr.push((sourceSize.w))
+          //this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
+          if (!this.maxSmallSymbolWidth) {
+            this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
+          } else {
+            this.xadvance = Number(this.maxSmallSymbolWidth)
+          }
+          this.yadvance = frame.h + Number(this.changeYAdvance)
+        }
+        //define xadvance for plain symbols
+        else {
+          if (!this.maxSymbolWidth) {
+            this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
+          } else {
+            this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
+          }
+        }
+        yoffset = (this.yadvance - sourceSize.h) / 2
+        xoffset = (Number(this.xadvance) - sourceSize.w) / 2
+        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.symbolsArr[index]} -->\n`
+        this.XMLText += row
       })
       this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--   -->\n`
       this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--       -->\n`
-      this.XMLText +=`  </chars>
+      this.XMLText += `  </chars>
         <kernings count="0">
         </kernings>
         </font>`
-        }
+    }
+    }
   }
-}
-
 </script>
 
 <style>

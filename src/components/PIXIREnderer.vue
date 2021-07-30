@@ -29,8 +29,14 @@ export default {
           'changeXAdvance','letterSpasing','showBorderCheckbox',
           'changeYAdvance','frameW','frameH'],
   mounted() {
-    this.drawPixi()
-    this.parse()
+    try {
+      this.drawPixi()
+      this.parse()
+    } catch (error) {
+      location.reload()
+
+    }
+
 
   },
   watch:{
