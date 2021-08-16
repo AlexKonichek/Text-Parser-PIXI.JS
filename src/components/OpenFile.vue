@@ -38,6 +38,7 @@ export default {
       }
 
       else{
+        this.showError = false
         let JsonPromise,ImagePromise
         fileListAsArray.forEach(file => {
             if(file.type === "application/json") {

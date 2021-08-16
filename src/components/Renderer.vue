@@ -60,6 +60,8 @@ export default {
   },
   methods: {
     drawPixi() {
+      this.canvasSize.w = 1800;
+      this.canvasSize.h = 500;
       let canvas = document.getElementById('pixi')
       this.app = new PIXI.Application({
         width: this.canvasSize.w,
@@ -97,10 +99,9 @@ export default {
         spriteSheetBorder.y = 0;
         spritesheetWrapper.addChild(spriteSheetBorder)
         this.app.stage.addChild(spritesheetWrapper);
-
         //letter spasing mode
        if(this.letterSpasing) {
-        this.textures.forEach((texture,i) => {
+          this.textures.forEach((texture,i) => {
             if(i>1){ return }
             else{
               let container = new PIXI.Container()
@@ -129,15 +130,16 @@ export default {
               }
             }
          })
-      }
-       //usual render mode
+         }
+       //main render mode
       else{
         this.textures.forEach((texture,i) => {
           let sprite = PIXI.Sprite.from(texture);
+
           let container = new PIXI.Container()
           let spriteBorder = new PIXI.Graphics();
-          sprite.width = sprite.texture.orig.width
-          sprite.height = sprite.texture.orig.height
+          sprite.width = this.coordinatesArr[i].sourceSize.w
+          sprite.height = this.coordinatesArr[i].sourceSize.h
           //sprite.width = this.frameW[0]
           //sprite.height = this.frameH[0]
           spriteBorder.lineStyle(2, 0xFF3300, 1);
