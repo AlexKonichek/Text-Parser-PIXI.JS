@@ -156,18 +156,20 @@ export default {
       else{
         this.textures.forEach((texture,i) => {
           let sprite = PIXI.Sprite.from(texture);
-          let container = new PIXI.Container()
+          console.log(sprite);
+          let spriteContainer = new PIXI.Container()
           let spriteBorder = new PIXI.Graphics();
-          sprite.width = sprite.texture.orig.width
-          sprite.height = sprite.texture.orig.height
+          sprite.width = this.coordinatesArr[i].spriteSourceSize
+          //sprite.width = sprite.texture.orig.width
+          //sprite.height = sprite.texture.orig.height
           spriteBorder.lineStyle(2, 0xFF3300, 1);
           spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
           spriteBorder.endFill();
           spriteBorder.x = sprite.position.x;
           spriteBorder.y = sprite.position.y;
           container.addChild(sprite)
-          container.position.x = this.coordinatesArr[i].x * this.scale
-          container.position.y = this.coordinatesArr[i].y * this.scale
+          container.position.x = this.coordinatesArr[i].x
+          container.position.y = this.coordinatesArr[i].y
           spritesheetWrapper.addChild(container)
           if(this.showBorderCheckbox) {
             container.addChild(spriteBorder)
