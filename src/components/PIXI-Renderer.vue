@@ -17,7 +17,7 @@ export default {
       rotation: 0,
       //width: 1800,
       //height: 800,
-      backgroundColor: 0xffffff,
+      backgroundColor: 0xFF0000,
       resolution: 1,
       position: 1,
       x: 0,
@@ -25,32 +25,19 @@ export default {
     }
   },
   props: ['json','charCodeArr','render', 'scale','shiftX',
-            'image','coordinatesArr','canvasSize',
+           'maxWidth', 'image','coordinatesArr','canvasSize',
           'changeXAdvance','letterSpasing','showBorderCheckbox',
-          'changeYAdvance'],
+          'changeYAdvance','frameW','frameH'],
   mounted() {
     try {
-      console.log(JSON.parse(this.json))
+      this.drawPixi()
+      this.parse()
     } catch (error) {
-      this.$modal.show('ErrorDialog'
-    )
+      location.reload()
 
-//       this.$modal.show('ErrorDialog', {
-//   title: 'OOOPS!',
-//   text: 'It seems some error occurred...Please refresh the page and try once more',
-//   buttons: [
-//     {
-//       title: 'Refresh',
-//       handler: () => {
-//         location.reload();
-//         this.$modal.hide('dialog')
-//       }
-//     },
-//   ]
-// })
-
-      
     }
+
+
   },
   watch:{
     showBorderCheckbox: function () {
@@ -59,12 +46,10 @@ export default {
     changeXAdvance: function () {
       this.renderSymbols()
     },
-    maxWidth: function () {
+    changeYAdvance: function () {
+      console.log('change y advance', this.changeYAdvance)
       this.renderSymbols()
     },
-    changeYAdvance: function () {
-      this.renderSymbols()
-   },
 
     letterSpasing: function () {
       this.renderSymbols()
@@ -75,6 +60,8 @@ export default {
   },
   methods: {
     drawPixi() {
+      this.canvasSize.w = 1800;
+      this.canvasSize.h = 500;
       let canvas = document.getElementById('pixi')
       this.app = new PIXI.Application({
         width: this.canvasSize.w,
@@ -83,19 +70,12 @@ export default {
         transparent: true,
         view: canvas,
       })
+      this.app.renderer.backgroundColor = 0x061639
 
     },
 
     parse() {
-      
-      let atlas
-      if(this.json!==""){
-         atlas = JSON.parse(this.json)
-      }else{
-        console.log("json is not valid")
-        return
-      }
-    
+      let atlas = JSON.parse(this.json)
       let loader = this.app.loader;
       let png = this.image
       loader.add(png).load(() => {
@@ -119,10 +99,9 @@ export default {
         spriteSheetBorder.y = 0;
         spritesheetWrapper.addChild(spriteSheetBorder)
         this.app.stage.addChild(spritesheetWrapper);
-
         //letter spasing mode
        if(this.letterSpasing) {
-        this.textures.forEach((texture,i) => {
+          this.textures.forEach((texture,i) => {
             if(i>1){ return }
             else{
               let container = new PIXI.Container()
@@ -151,25 +130,26 @@ export default {
               }
             }
          })
-      }
-       //ussual render mode
+         }
+       //main render mode
       else{
         this.textures.forEach((texture,i) => {
-          let sprite = PIXI.Sprite.from(texture);
-          console.log(sprite);
-          let spriteContainer = new PIXI.Container()
+         let sprite = PIXI.Sprite.from(texture);
+
+          let container = new PIXI.Container()
           let spriteBorder = new PIXI.Graphics();
-          sprite.width = this.coordinatesArr[i].spriteSourceSize
-          //sprite.width = sprite.texture.orig.width
-          //sprite.height = sprite.texture.orig.height
+          sprite.width = this.coordinatesArr[i].sourceSize.w
+          sprite.height = this.coordinatesArr[i].sourceSize.h
+          //sprite.width = this.frameW[0]
+          //sprite.height = this.frameH[0]
           spriteBorder.lineStyle(2, 0xFF3300, 1);
           spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
           spriteBorder.endFill();
           spriteBorder.x = sprite.position.x;
           spriteBorder.y = sprite.position.y;
           container.addChild(sprite)
-          container.position.x = this.coordinatesArr[i].x
-          container.position.y = this.coordinatesArr[i].y
+          container.position.x = this.coordinatesArr[i].x * this.scale
+          container.position.y = this.coordinatesArr[i].y * this.scale
           spritesheetWrapper.addChild(container)
           if(this.showBorderCheckbox) {
             container.addChild(spriteBorder)

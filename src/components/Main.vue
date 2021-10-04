@@ -2,8 +2,8 @@
   <main class="bg-secondary ">
     <div class="w-100 0">
       <div class="row">
-        <div class="col-sm-4 mr-2">
-          <div class="m-3">
+        <div class="col-sm-3 mr-2">
+          <div v-if="showSidePanel" class="m-3">
             <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
             <div class="input-group input-group-lg m-3">
               <input
@@ -16,9 +16,9 @@
                   required
                   placeholder="paste your symbols in right order"
               >
-              <div v-if="showError" class="alert alert-danger" role="alert">
-                Not enough symbols  for parsing
-              </div>
+            </div>
+            <div v-if="showInputError" class="alert alert-danger" role="alert">
+              Not enough symbols  for parsing
             </div>
             <label  class="label text-white h4" for="Select">Choose symbols set</label>
             <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="inputHandler" >
@@ -105,13 +105,20 @@
             <button ref='refresh' class="btn btn-light m-3"  v-on:click="refreshPage">Clear</button>
           </div>
         </div>
-        <div class="col-sm-8 bg-light ml-3">
-          <OpenFile v-if="!readyToRender"
-                   @json="JSONtext = $event"
-                    @image="image = $event"
-          ></OpenFile>
+        <div class="col-sm-9 bg-light ml-3">
+          <OpenFile v-if="showOpenFile"
+                    @json="loadedJSON = $event"
+                    @image="loadedPNG = $event"
 
-          <PIXIRenderer
+          ></OpenFile>
+          <XML_Creator
+              :allowToCreateXML="allowToCreateXML"
+              :XMLText="XMLText"
+              :JSONtext="loadedJSON"
+              :inputSymbols="symbolsArr"
+          />
+
+          <Renderer
               v-if="readyToRender"
               ref='PIXIRenderer'
               :render="readyToRender"
@@ -119,8 +126,8 @@
               :changeYAdvance="changeYAdvance"
               :charCodeArr="charCodeArr"
               :letterSpasing="checkedLetterSpasing"
-              :json="JSONtext"
-              :image="image"
+              :json="loadedJSON"
+              :image="loadedPNG"
               :scale="scale"
               :coordinatesArr="coordinatesArr"
               :canvasSize="canvasSize"
@@ -130,36 +137,22 @@
           />
         </div>
       </div>
-      <div v-if="showTextArea" class="row h-25 m-3">
-        <div class="col-sm-4">
-        </div>
-        <div class="col-sm-4">
-          <div class="form-group">
-            <label class="h4 text-white" for="JSON">JSON</label>
-            <textarea class="form-control" id="JSON" v-model="JSONtext" rows="10" cols="50"></textarea>
-
-          </div>
-        </div>
-        <div  class="col-sm-4">
-          <div class="form-group">
-            <label class="h4 text-white" for="XML">XML</label>
-            <textarea class="form-control" id="XML" v-model="XMLText" rows="10" cols="50"></textarea>
-            <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
-          </div>
-        </div>
-      </div>
+      <div class="row"></div>
     </div>
   </main>
 </template>
 <script>
 
 import OpenFile from "./OpenFile";
-import PIXIRenderer from "./PIXIREnderer";
+import Renderer from "./PIXI-Renderer.vue";
+import XML_Creator from "./XML-Creator.vue";
 
 export default {
-  components: {PIXIRenderer, OpenFile},
+  components: {Renderer, OpenFile, XML_Creator},
   data() {
     return {
+      allowToCreateXML: false,
+      font: 'font family',
       comaOrDotExist: false,
       showLetterSpacing: false,
       checkedLetterSpasing: false,
@@ -170,7 +163,6 @@ export default {
       changeYAdvance: 0,
       coordinatesArr: [],
       comaAndDotWidthsArr: [],
-      canvasSize: {},
       currentXAdvance: 0,
       dotXAdvance: 0,
       comaXAdvance: 0,
@@ -178,8 +170,11 @@ export default {
       selectOption2: ",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
       selectOption3: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       selectOption4: "abcdefghijklmnopqrstuvwxyz",
-      scale: 1,
-      showError: false,
+      showModal:false,
+      showImagePreview:false,
+      showOpenFile:true,
+      showSidePanel:false,
+      showInputError: false,
       showRenderButton: false,
       showBorderCheckbox: false,
       showLetterSpacingModeCheckbox: false,
@@ -189,11 +184,7 @@ export default {
       sourceSizeW: 0,
       sourceSizeH: 0,
       readyToRender: false,
-      framesArr: [],
       framesNames: [],
-      framesWidths: [],
-      framesHeights: [],
-      t: 0,
       inputSymbols: ",.0123456789",
       maxWidth: 1,
       maxSymbolWidthFromJSON: 0,
@@ -201,10 +192,10 @@ export default {
       maxSymbolWidth: undefined,
       maxSmallSymbolWidth: undefined,
       maxWidthReady: false,
-      font: 'font family',
+      framesArr:[],
       JSONFile: {},
-      JSONtext: '',
-      image: {},
+      loadedJSON: '',
+      loadedPNG: {},
       XMLText: '',
       XMLFileName: '',
       xadvance: 0,
@@ -214,24 +205,27 @@ export default {
 
     }
   },
-
   watch: {
+    loadedJSON: function () {
+      this.showOpenFile = false
+      this.showMessage()
+      this.showSidePanel = true
+      this.preparseJSON()
+      //this.allowToCreateXML = true
+      this.showImagePreview = true
+    },
     changeXAdvance: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
 
     changeYAdvance: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
     maxSymbolWidth: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
     maxSmallSymbolWidth: function () {
-      this.JSON2XML()
-    },
-
-    JSONtext: function () {
-      this.parseJSONtext();
+      //this.JSON2XML()
     },
 
     charCodeArr: function () {
@@ -241,7 +235,6 @@ export default {
       })
     },
   },
-
   computed: {
     maxSymbolHeightFromJSON() {
       return Math.max(...this.framesHeights)
@@ -268,172 +261,65 @@ export default {
     }
 
   },
-
   methods: {
-    parseJSONtext () {
-      console.log("change JSONtext")
-      let data = JSON.parse(this.JSONtext)
-      let frames = Object.values(data)[0]
-      this.canvasSize = Object.values(data)[1].size
-      this.XMLFileName = Object.values(data)[1].image
-      this.scale = Object.values(data)[1].scale
-      this.font = Object.values(data)[1].image.split(".")[0]
-      this.framesArr = Object.values(frames)
-      this.framesArr.forEach(frame => {
-        this.framesWidths.push(frame.sourceSize.w)
-        this.framesHeights.push(frame.sourceSize.h)
+      showMessage() {
+        this.showModal = true
+        //this.preparseJSON()
 
-      })
-      this.framesNames = Object.keys(frames)
-      this.maxWidthReady = true
-      this.$refs.inputSymbols.focus()
-      this.prepareToRender()
-    },
+      },
+      preparseJSON() {
+        console.warn("preparseJSON");
+        let data = JSON.parse(this.loadedJSON)
+        let frames = Object.values(data)[0]
+        this.framesArr = Object.values(frames)
+      },
 
-    RequiredSymbolsHandler(e) {
-      console.log(e.target.value)
-      this.inputSymbols = e.target.value
-      this.updateData()
-      this.prepareToRender()
-    },
-    inputHandler() {
-      this.updateData()
-      this.prepareToRender()
+      RequiredSymbolsHandler(e) {
+        console.log("RequiredSymbolsHandler", e.target.value)
+        let symbols = e.target.value
+        this.symbolsArr =symbols.split("");
+         if(this.symbolsArr.length === this.framesArr.length) {
+           this.showInputError = false
+           this.allowToCreateXML = true
+         }else {
+           this.showInputError = true
+         }
 
-    },
-   updateData() {
-      this.comaAndDotWidthsArr = [],
-          this.coordinatesArr = [],
-          this.charCodeArr = [],
-          this.charCodesAndNamesArr = [],
-          this.symbolsArr = []
-    },
+        //this.updateData()
+        //this.prepareToRender()
+      },
+      inputHandler()
+      {
+        console.log("inputHandler")
+        this.updateData()
+        this.prepareToRender()
+      },
+      updateData()
+      {
+        this.comaAndDotWidthsArr = [],
+            this.coordinatesArr = [],
+            this.charCodeArr = [],
+            this.charCodesAndNamesArr = [],
+            this.symbolsArr = []
+      },
+      xAdvanceInputHandler(e)
+      {
+        console.log('xAdvanceInputHandler')
+        this.currentXAdvance = e.target.value
+        //this.JSON2XML()
+      }
+    ,
 
-    getMaxSymbolWidthFromJSON() {
-      return Math.max(...this.framesWidths)
-    },
-    getMaxSmallSymbolWidthFromJSON() {
-      return Math.max(...this.comaAndDotWidthsArr)
-    },
+      refreshPage()
+      {
+        location.reload();
+      }
+    ,
+      prepareToRender: function () {
+        //this.JSON2XML();
 
-    xAdvanceInputHandler(e) {
-      console.log('xAdvanceInputHandler')
-      this.currentXAdvance = e.target.value
-      this.JSON2XML()
-    },
-
-    refreshPage() {
-      location.reload();
-    },
-
-    update(dt) {
-      this.t += dt
-    },
-
-    prepareToRender: function () {
-          this.maxSymbolWidthFromJSON = this.getMaxSymbolWidthFromJSON()
-          this.maxSmallSymbolWidthFromJSON = this.getMaxSmallSymbolWidthFromJSON()
-          this.showTextArea = true
-          let ArrInputValues = this.inputSymbols.split("");
-          ArrInputValues.forEach((item, i) => {
-            this.symbolsArr.push(item);
-            this.charCodeArr.push(item.charCodeAt(0));
-            if (this.charCodeArr.includes(44) || this.charCodeArr.includes(46)) {
-              this.comaOrDotExist = true
-            }
-          })
-
-      //input validation
-            if (ArrInputValues.length > 0 && ArrInputValues.length !== this.symbolsArr.length) {
-              //this.showError = true
-            } else {
-              this.readyToRender = true;
-              this.showError = false
-              this.showShiftX = true
-              this.showRenderButton = false
-              this.showBorderCheckbox = true
-              this.showLetterSpacingModeCheckbox = true
-            }
-
-      this.JSON2XML();
-
-    },
-
-    downloadXML: function () {
-      let xmltext = this.XMLText
-      let name = this.XMLFileName.split('.')[0]
-      let filename = `${name}.xml`;
-      let pom = document.createElement('a');
-      let bb = new Blob([xmltext], {type: 'text/plain'});
-      pom.setAttribute('href', window.URL.createObjectURL(bb));
-      pom.setAttribute('download', filename);
-      pom.dataset.downloadurl = ['text/plain', pom.download, pom.href].join(':');
-      pom.draggable = true;
-      pom.classList.add('dragout');
-      pom.click();
-    },
-
-    JSON2XML() {
-      console.log("JSON2XML");
-      let yoffset,
-          xoffset;
-      this.xadvance = this.getMaxSymbolWidthFromJSON()
-
-      //first part of XML file
-      this.XMLText = `
-<font>
-  <info face="${this.font}" size="${this.framesHeights[0]}" />
-  <common lineHeight="${this.framesHeights[0]}" scaleW="494" scaleH="479" pages="1" />
-  <pages>
-    <page id="0" file="${this.font}.png" />
-  </pages>
-  <chars count="${this.framesArr.length}">\n`
-      this.yadvance = this.maxSymbolHeightFromJSON + Number(this.changeYAdvance)
-      this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
-        //fill coordinates array for rendering
-        let coordinates = {x: frame.x, y: frame.y, spriteSourceSize:{
-          x:spriteSourceSize.x, y:spriteSourceSize.y
-          }
-
-        }
-        this.coordinatesArr.push(coordinates)
-        //define xadvance for dot,comma or similar small symbol
-        if (this.symbolsArr[index] === "." || this.symbolsArr[index] === ',') {
-          this.comaAndDotWidthsArr.push((sourceSize.w))
-          //this.maxSmallSymbolWidth = Math.max(...comaAndDotWidthsArr)
-          if (!this.maxSmallSymbolWidth) {
-            this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
-          } else {
-            this.xadvance = Number(this.maxSmallSymbolWidth)
-          }
-          this.yadvance = frame.h + Number(this.changeYAdvance)
-        }
-        //define xadvance for plain symbols
-        else {
-          if (!this.maxSymbolWidth) {
-            this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
-          } else {
-            this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
-          }
-        }
-        yoffset = (this.yadvance - sourceSize.h) / 2
-        xoffset = (Number(this.xadvance) - sourceSize.w) / 2
-        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.symbolsArr[index]} -->\n`
-        this.XMLText += row
-      })
-      //end part of XML file
-      this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--   -->\n`
-      this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--       -->\n`
-      this.XMLText += `  </chars>
-        <kernings count="0">
-        </kernings>
-        </font>`
+      }
     }
     }
-  }
+
 </script>
-
-<style>
-</style>
-
- 
