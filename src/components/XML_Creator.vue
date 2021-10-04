@@ -3,15 +3,15 @@
   <div v-if="showTextArea" class="row h-25 m-3">
     <div class="col-sm-6">
       <div class="form-group">
-        <label class="h4 text-white" for="JSON">JSON</label>
-        <textarea class="form-control" id="JSON" v-model="JSONtext" rows="10" cols="50"></textarea>
+        <label class="h4 text-dark" for="JSON">JSON</label>
+        <textarea class="form-control" id="JSON" v-model="JSONtext" rows="22" cols="50"></textarea>
 
       </div>
     </div>
     <div  class="col-sm-6">
       <div class="form-group">
-        <label class="h4 text-white" for="XML">XML</label>
-        <textarea class="form-control" id="XML" v-model="XMLText" rows="10" cols="50"></textarea>
+        <label class="h4 text-dark" for="XML">XML</label>
+        <textarea class="form-control" id="XML" v-model="XMLText" rows="22" cols="50"></textarea>
         <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
       </div>
     </div>
@@ -45,19 +45,22 @@ export default {
   props: ["XML", "JSONtext", "inputSymbols", "allowToCreateXML"],
   watch: {
     allowToCreateXML: function () {
+      console.warn("allowToCreateXML");
       if(this.allowToCreateXML) {
-        console.log("allowToCreateXML");
         this.parseJSONtext();
+        this.fillCharcodeArr()
       }
     },
+    inputSymbols: function () {
+      this.fillCharcodeArr()
+    }
   },
   computed: {},
   methods: {
     parseJSONtext() {
-      //console.log("change JSONtext")
       let data = JSON.parse(this.JSONtext)
       let frames = Object.values(data)[0]
-      this.canvasSize = Object.values(data)[1].size
+      //this.canvasSize = Object.values(data)[1].size
       this.XMLFileName = Object.values(data)[1].image
       this.scale = Object.values(data)[1].scale
       this.font = Object.values(data)[1].image.split(".")[0]
@@ -68,7 +71,6 @@ export default {
       })
       this.framesNames = Object.keys(frames)
       this.maxWidthReady = true
-      this.fillCharcodeArr()
       this.JSON2XML()
       //this.$refs.inputSymbols.focus()
       //this.prepareToRender()
@@ -95,9 +97,12 @@ export default {
       return Math.max(...this.comaAndDotWidthsArr)
     },
     maxSymbolHeightFromJSON() {
+      console.log(Math.max(...this.framesHeights))
       return Math.max(...this.framesHeights)
     },
     fillCharcodeArr() {
+      console.warn("fillCharcodeArr")
+      this.charCodeArr = []
       this.inputSymbols.forEach(symbol => {
         this.charCodeArr.push(symbol.charCodeAt(0))
       })
@@ -120,7 +125,8 @@ export default {
     <page id="0" file="${this.font}.png" />
   </pages>
   <chars count="${this.framesArr.length + 2}">\n`
-      this.yadvance = this.maxSymbolHeightFromJSON //+ Number(this.changeYAdvance)
+
+      this.yadvance = this.maxSymbolHeightFromJSON() //+ Number(this.changeYAdvance)
 
         this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
 
@@ -133,7 +139,6 @@ export default {
               h: sourceSize.h
             }
           }
-
           this.coordinatesArr.push(coordinates)
           // //define xadvance for dot,comma or similar small symbol
           if (this.symbolsArr[index] === "." || this.symbolsArr[index] === ',') {
@@ -146,18 +151,22 @@ export default {
             } else {
               this.xadvance = Number(this.maxSmallSymbolWidth)
             }
-            this.yadvance = frame.h + Number(this.changeYAdvance)
+            this.yadvance = frame.h //+ Number(this.changeYAdvance)
           }
+
           //define xadvance for plain symbols
           else {
             if (!this.maxSymbolWidth) {
-              this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) + Number(this.changeXAdvance)
+              this.xadvance = Number(this.getMaxSymbolWidthFromJSON()) //+ Number(this.changeXAdvance)
             } else {
-              this.xadvance = Number(this.maxSymbolWidth) + Number(this.changeXAdvance)
+              this.xadvance = Number(this.maxSymbolWidth) //+ Number(this.changeXAdvance)
             }
+
           }
-          yoffset = (this.yadvance - sourceSize.h) / 2
-          xoffset = (Number(this.xadvance) - sourceSize.w) / 2
+          yoffset = (sourceSize.h - Number(this.yadvance)) / 2
+          xoffset = (sourceSize.w - Number(this.xadvance)) / 2
+          console.warn(this.xadvance, yoffset, xoffset);
+
           let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvance}" /><!-- ${this.inputSymbols[index]} -->\n`
           this.XMLText += row
         });

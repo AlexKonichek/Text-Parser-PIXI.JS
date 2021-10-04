@@ -2,7 +2,7 @@
   <main class="bg-secondary ">
     <div class="w-100 0">
       <div class="row">
-        <div class="col-sm-4 mr-2">
+        <div class="col-sm-3 mr-2">
           <div v-if="showSidePanel" class="m-3">
             <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
             <div class="input-group input-group-lg m-3">
@@ -105,11 +105,18 @@
             <button ref='refresh' class="btn btn-light m-3"  v-on:click="refreshPage">Clear</button>
           </div>
         </div>
-        <div class="col-sm-8 bg-light ml-3">
-          <OpenFile v-if="!readyToRender"
-                    @json="JSONtext = $event"
-                    @image="image = $event"
+        <div class="col-sm-9 bg-light ml-3">
+          <OpenFile v-if="showOpenFile"
+                    @json="loadedJSON = $event"
+                    @image="loadedPNG = $event"
+
           ></OpenFile>
+          <XML_Creator
+              :allowToCreateXML="allowToCreateXML"
+              :XMLText="XMLText"
+              :JSONtext="loadedJSON"
+              :inputSymbols="symbolsArr"
+          />
 
           <Renderer
               v-if="readyToRender"
@@ -119,8 +126,8 @@
               :changeYAdvance="changeYAdvance"
               :charCodeArr="charCodeArr"
               :letterSpasing="checkedLetterSpasing"
-              :json="JSONtext"
-              :image="image"
+              :json="loadedJSON"
+              :image="loadedPNG"
               :scale="scale"
               :coordinatesArr="coordinatesArr"
               :canvasSize="canvasSize"
@@ -130,15 +137,7 @@
           />
         </div>
       </div>
-      <div class="row">
-        <XML_Creator
-            :allowToCreateXML="allowToCreateXML"
-            :XMLText="XMLText"
-            :XMLFileName="XMLFileName"
-            :JSONtext="JSONtext"
-            :inputSymbols="symbolsArr"
-        />
-      </div>
+      <div class="row"></div>
     </div>
   </main>
 </template>
@@ -171,7 +170,9 @@ export default {
       selectOption2: ",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
       selectOption3: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       selectOption4: "abcdefghijklmnopqrstuvwxyz",
+      showModal:false,
       showImagePreview:false,
+      showOpenFile:true,
       showSidePanel:false,
       showInputError: false,
       showRenderButton: false,
@@ -193,8 +194,8 @@ export default {
       maxWidthReady: false,
       framesArr:[],
       JSONFile: {},
-      JSONtext: '',
-      image: {},
+      loadedJSON: '',
+      loadedPNG: {},
       XMLText: '',
       XMLFileName: '',
       xadvance: 0,
@@ -205,23 +206,26 @@ export default {
     }
   },
   watch: {
-    JSONtext: function () {
-      this.preparseJSON()
+    loadedJSON: function () {
+      this.showOpenFile = false
+      this.showMessage()
       this.showSidePanel = true
+      this.preparseJSON()
+      //this.allowToCreateXML = true
       this.showImagePreview = true
     },
     changeXAdvance: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
 
     changeYAdvance: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
     maxSymbolWidth: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
     maxSmallSymbolWidth: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     },
 
     charCodeArr: function () {
@@ -258,17 +262,22 @@ export default {
 
   },
   methods: {
+      showMessage() {
+        this.showModal = true
+        //this.preparseJSON()
+
+      },
       preparseJSON() {
-        let data = JSON.parse(this.JSONtext)
+        console.warn("preparseJSON");
+        let data = JSON.parse(this.loadedJSON)
         let frames = Object.values(data)[0]
         this.framesArr = Object.values(frames)
       },
 
       RequiredSymbolsHandler(e) {
-        //console.log("RequiredSymbolsHandler", e.target.value)
+        console.log("RequiredSymbolsHandler", e.target.value)
         let symbols = e.target.value
         this.symbolsArr =symbols.split("");
-        console.log(this.symbolsArr.length, this.framesArr.length )
          if(this.symbolsArr.length === this.framesArr.length) {
            this.showInputError = false
            this.allowToCreateXML = true
@@ -278,16 +287,13 @@ export default {
 
         //this.updateData()
         //this.prepareToRender()
-      }
-    ,
+      },
       inputHandler()
       {
         console.log("inputHandler")
         this.updateData()
         this.prepareToRender()
-
-      }
-    ,
+      },
       updateData()
       {
         this.comaAndDotWidthsArr = [],
@@ -295,16 +301,12 @@ export default {
             this.charCodeArr = [],
             this.charCodesAndNamesArr = [],
             this.symbolsArr = []
-      }
-    ,
-
-
-
+      },
       xAdvanceInputHandler(e)
       {
         console.log('xAdvanceInputHandler')
         this.currentXAdvance = e.target.value
-        this.JSON2XML()
+        //this.JSON2XML()
       }
     ,
 
@@ -314,7 +316,7 @@ export default {
       }
     ,
       prepareToRender: function () {
-        this.JSON2XML();
+        //this.JSON2XML();
 
       }
     }
