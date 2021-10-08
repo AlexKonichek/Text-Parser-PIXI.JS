@@ -1,15 +1,15 @@
 <template>
-  <div>
+ <div>
     <div v-if="showOpenFile">
       <label class="m-3">
         Open Files
-        <input type="file" class="btn btn-secondary btn-lg m-3" multiple accept="application/JSON,image/*" @change="loadTextFromFile" >
+        <input type="file" class="btn btn-secondary btn-lg m-3" multiple accept="application/JSON,image/*" @change="loadResources" >
       </label>
     </div>
     <div v-if="showImage">
       <h1>Image preview</h1>
       <div  class="card" style="width: 15rem">
-       <img ref="img" src="" class="card-img-top" alt="image preview">
+        <img ref="img" src="" class="card-img-top" alt="image preview">
       </div>
     </div>
     <div v-if="showError" class="alert alert-danger" role="alert">
@@ -29,41 +29,48 @@ export default {
     }
   },
   methods: {
-    loadTextFromFile(ev) {
+    loadResources(ev) {
       let jsonfile,imageFile
       const fileListAsArray = Array.from(ev.target.files)
+
       if(fileListAsArray.length!==2) {
         this.showError = true
-      }else{
-        this.showError = false
-        fileListAsArray.forEach(file => {
-        if(file.type === "application/json") {
-          jsonfile=file
-          const reader = new FileReader();
-          reader.onload = e => {
-            this.$emit("load", e.target.result);
-          }
-          reader.readAsText(jsonfile);
-        }
-        if(file.type ==="image/png") {
-          imageFile=file
-          //this.showImage=true
-          let reader = new FileReader();
-          reader.onload = e => {
-            this.$emit("image", reader.result);
-            this.showOpenFile=false
-
-          }
-          reader.readAsDataURL(file);
-        }
-      })
-       this.$emit("json",jsonfile)
-
       }
-     
 
-     
-      
+      else{
+        this.showError = false
+        let JsonPromise,ImagePromise
+        fileListAsArray.forEach(file => {
+            if(file.type === "application/json") {
+              jsonfile=file
+               JsonPromise =  new Promise((resolve, reject) => {
+                const fileReader = new FileReader()
+                fileReader.onload = event => resolve(event.target.result)
+                fileReader.onerror = error => reject(error)
+                fileReader.readAsText(jsonfile)
+              })
+            }
+            if(file.type ==="image/png") {
+              imageFile=file
+               ImagePromise =  new Promise((resolve, reject) => {
+                const fileReader = new FileReader()
+                fileReader.onload = event => resolve(event.target.result)
+                fileReader.onerror = error => reject(error)
+                fileReader.readAsDataURL(imageFile);
+              })
+            }
+      })
+
+        let resourceReady = Promise.all([JsonPromise, ImagePromise]).then(([json,image]) => {
+          this.$emit("json",json)
+          this.$emit("image",image)
+
+        });
+      }
+
+
+
+
     }
   }
 };
