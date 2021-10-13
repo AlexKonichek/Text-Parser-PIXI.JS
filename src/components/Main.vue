@@ -24,8 +24,6 @@
             <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="inputHandler" >
               <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
               <option>{{ this.selectOption2 }}</option>
-              <option>{{ this.selectOption3 }}</option>
-              <option>{{ this.selectOption4 }}</option>
             </select>
             <label class="text-white h4" for="font-family">Font family</label>
             <div class="input-group input-group-lg m-3">
@@ -171,9 +169,7 @@ export default {
       dotXAdvance: 0,
       comaXAdvance: 0,
       selectOption1: '0123456789,.×',
-      selectOption2: ",ABCDEFGHIJKLMNOPQRSTUVWX×YZ.",
-      selectOption3: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      selectOption4: "abcdefghijklmnopqrstuvwxyz",
+      selectOption2: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       showModal:false,
       showCreateXMLButton:false,
       showImagePreview:false,
