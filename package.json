@@ -1,16 +1,20 @@
 {
-  "name": "perser",
+  "name": "parser",
   "version": "0.1.0",
   "private": true,
+  "home": "https://alexkonichek.github.io/Text-Parser-PIXI.JS/",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build"
   },
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "bootstrap": "^5.1.3",
     "core-js": "^3.6.5",
+    "gh-pages": "^3.2.3",
     "pixi.js": "^6.0.4",
     "sass-loader": "^12.1.0",
     "vue": "^2.6.11",
