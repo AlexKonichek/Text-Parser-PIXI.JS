@@ -12,7 +12,7 @@
                   ref="inputSymbols"
                   class="form-control mr-3"
                   v-model="inputSymbols"
-                  v-on:input="RequiredSymbolsHandler"
+                  v-on:change="RequiredSymbolsHandler"
                   required
                   placeholder="paste your symbols in right order"
               >
@@ -50,18 +50,18 @@
                   type="number"
               >
             </div>
-            <label class="text-white h4" for="XAdvanceSmall">Small symbol XAdvance</label>
-            <div class="input-group input-group-lg m-3">
-              <input
-                  id="XAdvanceSmall"
-                  class="form-control mr-3"
-                  ref="XAdvance"
-                  v-model="maxSmallSymbolWidthModel"
-                  step="1"
-                  min="1"
-                  type="number"
-              >
-            </div>
+            <!--            <label class="text-white h4" for="XAdvanceSmall">Small symbol XAdvance</label>-->
+            <!--            <div class="input-group input-group-lg m-3">-->
+            <!--              <input-->
+            <!--                  id="XAdvanceSmall"-->
+            <!--                  class="form-control mr-3"-->
+            <!--                  ref="XAdvance"-->
+            <!--                  v-model="maxSmallSymbolWidthModel"-->
+            <!--                  step="1"-->
+            <!--                  min="1"-->
+            <!--                  type="number"-->
+            <!--              >-->
+            <!--            </div>-->
 
             <div v-if="checkedLetterSpasing">
               <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
@@ -112,7 +112,7 @@
                     @image="loadedPNG = $event"
 
           ></OpenFile>
-          <button v-if="showCreateXMLButton" class="btn btn-light m-3"  v-on:click="CreateXML">Create</button>
+          <button v-if="showCreateXMLButton" class="btn btn-dark m-4"  v-on:click="CreateXML">Create</button>
           <XML_Creator
               :allowToCreateXML="allowToCreateXML"
               :XMLText="XMLText"
@@ -148,7 +148,7 @@
 
 import OpenFile from "./OpenFile";
 import Renderer from "./Renderer";
-import XML_Creator from "@/components/XML-Creator";
+import XML_Creator from "./XML-Creator";
 
 export default {
   components: {Renderer, OpenFile, XML_Creator},
@@ -213,16 +213,16 @@ export default {
   },
   watch: {
     loadedJSON: function () {
-      debugger
       this.preparseJSON()
       this.showOpenFile = false
-      this.showMessage()
+      //this.showMessage()
       this.showSidePanel = true
       //this.allowToCreateXML = true
-      this.showImagePreview = true
+      //this.showImagePreview = true
     },
     inputSymbols: function () {
       console.warn("change inputSymbols")
+      this.symbolsArr = this.inputSymbols.split("");
     },
     changeXAdvance: function () {
       //this.JSON2XML()
@@ -271,80 +271,84 @@ export default {
 
   },
   methods: {
-      CreateXML () {
-        this.allowToCreateXML = true
-      },
-      showMessage() {
-        this.showModal = true
-        //this.preparseJSON()
+    CreateXML () {
+      this.allowToCreateXML = true
+      this.showCreateXMLButton = false
+    },
+    showMessage() {
+      this.showModal = true
+      //this.preparseJSON()
 
-      },
-      preparseJSON() {
-        console.warn("preparseJSON");
-        debugger
-        let data = JSON.parse(this.loadedJSON)
-        let frames = Object.values(data)[0]
-        this.framesArr = Object.values(frames)
-        let inputSymbolsArr = this.inputSymbols.split("");
-        this.framesArr.forEach((frame, index) => {
-          if (inputSymbolsArr[index] === "." || inputSymbolsArr[index] === "," || inputSymbolsArr[index] === "×") {
-            this.arrSmallSymbolsWidth.push(inputSymbolsArr[index])
-            this.maxSmallSymbolWidth = Math.max(...this.arrSmallSymbolsWidth)
-          }
-          this.framesWidths.push(frame.sourceSize.w)
-        })
+    },
+    preparseJSON() {
+      console.warn("preparseJSON");
+      let data = JSON.parse(this.loadedJSON)
+      let frames = Object.values(data)[0]
+      this.framesArr = Object.values(frames)
+      let inputSymbolsArr = this.inputSymbols.split("");
+      this.framesArr.forEach((frame, index) => {
+        if (inputSymbolsArr[index] === "." || inputSymbolsArr[index] === "," || inputSymbolsArr[index] === "×") {
+          this.arrSmallSymbolsWidth.push(inputSymbolsArr[index])
+          this.maxSmallSymbolWidth = Math.max(...this.arrSmallSymbolsWidth)
+        }
+        this.framesWidths.push(frame.sourceSize.w)
+      })
 
-        this.maxSymbolWidthFromJSON = Math.max(...this.framesWidths)
-        console.log(this.maxSymbolWidthFromJSON);
-      },
+      this.maxSymbolWidthFromJSON = Math.max(...this.framesWidths)
+      console.log(this.maxSymbolWidthFromJSON);
+    },
 
-      RequiredSymbolsHandler(e) {
+    RequiredSymbolsHandler(e) {
 
-        console.log("RequiredSymbolsHandler", e.target.value)
+      console.log("RequiredSymbolsHandler", e.target.value)
 
-        let symbols = e.target.value
-        this.symbolsArr =symbols.split("");
-         if(this.symbolsArr.length === this.framesArr.length && this.framesArr.length) {
-           this.showInputError = false
-           this.showCreateXMLButton = true
-         }else {
-           this.showInputError = true
-         }
+      let symbols = e.target.value
+      this.symbolsArr =symbols.split("");
 
-        //this.updateData()
-        //this.prepareToRender()
-      },
-      inputHandler() {
-        console.log("inputHandler: choose symbols set is touched")
-        this.updateData()
-        this.prepareToRender()
-      },
-      updateData()
-      {
-        this.comaAndDotWidthsArr = [],
-            this.coordinatesArr = [],
-            this.charCodeArr = [],
-            this.charCodesAndNamesArr = [],
-            this.symbolsArr = []
-      },
-      xAdvanceInputHandler(e)
-      {
-        console.log('xAdvanceInputHandler')
-        this.currentXAdvance = e.target.value
-        //this.JSON2XML()
+      //input symbols verification
+      if(this.symbolsArr.length === this.framesArr.length && this.framesArr.length) {
+        this.showInputError = false
+        this.showCreateXMLButton = true
+      }else {
+        this.showInputError = true
       }
+
+      //this.updateData()
+      //this.prepareToRender()
+    },
+    inputHandler() {
+      console.log("inputHandler: choose symbols set is touched")
+      this.showCreateXMLButton = true
+
+      //this.updateData()
+      //this.prepareToRender()
+    },
+    updateData()
+    {
+      this.comaAndDotWidthsArr = [],
+          this.coordinatesArr = [],
+          this.charCodeArr = [],
+          this.charCodesAndNamesArr = [],
+          this.symbolsArr = []
+    },
+    xAdvanceInputHandler(e)
+    {
+      console.log('xAdvanceInputHandler')
+      this.currentXAdvance = e.target.value
+      //this.JSON2XML()
+    }
     ,
 
-      refreshPage()
-      {
-        location.reload();
-      }
+    refreshPage()
+    {
+      location.reload();
+    }
     ,
-      prepareToRender: function () {
-        //this.JSON2XML();
+    prepareToRender: function () {
+      //this.JSON2XML();
 
-      }
     }
-    }
+  }
+}
 
 </script>

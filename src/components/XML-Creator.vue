@@ -1,22 +1,22 @@
 <template>
-<div>
-  <div v-if="showTextArea" class="row h-25 m-3">
-    <div class="col-sm-6">
-      <div class="form-group">
-        <label class="h4 text-dark" for="JSON">JSON</label>
-        <textarea class="form-control" id="JSON" v-model="JSONtext" rows="22" cols="50"></textarea>
+  <div>
+    <div v-if="showTextArea" class="row h-25 m-3">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="h4 text-dark" for="JSON">JSON</label>
+          <textarea class="form-control" id="JSON" v-model="JSONtext" rows="22" cols="50"></textarea>
 
+        </div>
       </div>
-    </div>
-    <div  class="col-sm-6">
-      <div class="form-group">
-        <label class="h4 text-dark" for="XML">XML</label>
-        <textarea class="form-control" id="XML" v-model="XMLText" rows="22" cols="50"></textarea>
-        <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
+      <div  class="col-sm-6">
+        <div class="form-group">
+          <label class="h4 text-dark" for="XML">XML</label>
+          <textarea class="form-control" id="XML" v-model="XMLText" rows="22" cols="50"></textarea>
+          <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default {
   name: "XML_Creator",
   data() {
     return {
-      xadvanceCurrency: null,
+      xadvanceCurrent: null,
       comaOrDotExist:false,
       XMLFileName: "",
       scale: "",
@@ -53,11 +53,11 @@ export default {
     },
 
     GeneralxAdvance: function () {
-      this.xadvanceCurrency = Number(this.GeneralxAdvance)
+      this.xadvanceCurrent = Number(this.GeneralxAdvance)
       this.JSON2XML()
     },
     inputSymbols: function () {
-      this.JSON2XML()
+      //this.JSON2XML()
     }
   },
   computed: {},
@@ -128,51 +128,57 @@ export default {
       this.yadvance = this.maxSymbolHeightFromJSON() //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
-          //fill coordinates array for rendering
-          let coordinates = {
-            x: frame.x,
-            y: frame.y,
-            sourceSize: {
-              w: sourceSize.w,
-              h: sourceSize.h
-            }
+        //fill coordinates array for rendering
+        let coordinates = {
+          x: frame.x,
+          y: frame.y,
+          sourceSize: {
+            w: sourceSize.w,
+            h: sourceSize.h
           }
-          this.coordinatesArr.push(coordinates)
+        }
+        this.coordinatesArr.push(coordinates)
 
-          // //define xadvance for dot,comma or similar small symbol
-            if(this.inputSymbols[index] === "." || this.inputSymbols[index] === "," || this.inputSymbols[index] === "×" ) {
+        // //define xadvance for dot,comma or similar small symbol
+        if(this.inputSymbols[index] === "." || this.inputSymbols[index] === "," || this.inputSymbols[index] === "×" ) {
 
-              this.smallSymbolsWidthsArr.push(this.inputSymbols[index])
-              this.comaOrDotExist = true
-              this.maxSmallSymbolWidth = Math.max(...this.smallSymbolsWidthsArr)
-                  if (!this.maxSmallSymbolWidth) {
-                    //this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
-                  } else {
-                    this.xadvance = this.maxSmallSymbolWidth
-                  }
-              this.yadvance = frame.h //+ Number(this.changeYAdvance)
-           }
-
-          //define xadvance for plain symbols
-          else {
-            if (this.GeneralxAdvance === undefined) {
-
-              this.xadvanceCurrency = Number(this.getMaxSymbolWidthFromJSON())
-            }
-
-
+          this.smallSymbolsWidthsArr.push(this.inputSymbols[index])
+          this.comaOrDotExist = true
+          this.maxSmallSymbolWidth = Math.max(...this.smallSymbolsWidthsArr)
+          if (!this.maxSmallSymbolWidth) {
+            //this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
+          } else {
+            this.xadvance = this.maxSmallSymbolWidth
           }
-          yoffset = (Number(this.yadvance)- sourceSize.h) / 2
-          xoffset = (Number(this.xadvanceCurrency)- sourceSize.w) / 2
-          //console.warn(this.GeneralxAdvance, this.xadvance, yoffset, xoffset);
+          this.yadvance = frame.h //+ Number(this.changeYAdvance)
+        }
 
-          let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvanceCurrency}" /><!-- ${this.inputSymbols[index]} -->\n`
+        //define xadvance for plain symbols
+        else {
+          if (this.GeneralxAdvance === undefined) {
+
+            this.xadvanceCurrent = Number(this.getMaxSymbolWidthFromJSON())
+          }
+
+
+        }
+        if(this.xadvanceCurrent) {
+          xoffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
+        }
+        else {
+          //this.xadvanceCurrent = this.xadvanceCurrent
+        }
+        yoffset = (Number(this.yadvance)- sourceSize.h) / 2
+
+        //console.warn(this.GeneralxAdvance, this.xadvance, yoffset, xoffset);
+
+        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.inputSymbols[index]} -->\n`
           this.XMLText += row
         });
 
       //end part of XML file
-      this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--   -->\n`
-      this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvance}" /><!--       -->\n`
+      this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent}" /><!--   -->\n`
+      this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent}" /><!--       -->\n`
       this.XMLText += `  </chars>
         <kernings count="0">
         </kernings>
