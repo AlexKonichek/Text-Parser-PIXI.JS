@@ -1,4 +1,4 @@
-# perser
+# parser
 
 ## Project setup
 ```
