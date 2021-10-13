@@ -29,7 +29,6 @@ export default {
       XMLFileName: "",
       scale: "",
       smallSymbolsWidthsArr: [],
-      maxSmallSymbolWidth: null,
       framesArr: [],
       framesWidths: [],
       framesHeights: [],
@@ -40,10 +39,12 @@ export default {
       font: 'font family',
       maxWidthReady: false,
       symbols: this.inputSymbols,
-      showTextArea:false
+      showTextArea:false,
+      xOffset:null,
+      yOffset:null
     }
   },
-  props: ["XML", "JSONtext", "inputSymbols", "allowToCreateXML", "GeneralxAdvance"],
+  props: ["XML", "JSONtext", "inputSymbols", "allowToCreateXML", "GeneralxAdvance", "MaxSymbolsWidth","maxSmallSymbolWidth"],
   watch: {
     allowToCreateXML: function () {
       if(this.allowToCreateXML) {
@@ -93,14 +94,9 @@ export default {
       pom.classList.add('dragout');
       pom.click();
     },
-    getMaxSmallSymbolsWidths() {
-
-    },
-
     getMaxSymbolWidthFromJSON() {
       return Math.max(...this.framesWidths)
     },
-
     maxSymbolHeightFromJSON() {
       return Math.max(...this.framesHeights)
     },
@@ -112,10 +108,8 @@ export default {
     },
 
     JSON2XML() {
-      console.warn("JSON2XML");
 
-      let yoffset,
-          xoffset;
+     // console.warn("JSON2XML");
       //first part of XML file
       this.XMLText = `
 <font>
@@ -128,6 +122,7 @@ export default {
       this.yadvance = this.maxSymbolHeightFromJSON() //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
+
         //fill coordinates array for rendering
         let coordinates = {
           x: frame.x,
@@ -141,38 +136,24 @@ export default {
 
         // //define xadvance for dot,comma or similar small symbol
         if(this.inputSymbols[index] === "." || this.inputSymbols[index] === "," || this.inputSymbols[index] === "×" ) {
-
-          this.smallSymbolsWidthsArr.push(this.inputSymbols[index])
-          this.comaOrDotExist = true
-          this.maxSmallSymbolWidth = Math.max(...this.smallSymbolsWidthsArr)
-          if (!this.maxSmallSymbolWidth) {
-            //this.xadvance = Number(this.getMaxSmallSymbolWidthFromJSON())
+          if (this.maxSmallSymbolWidth) {
+            this.xadvanceCurrent = this.maxSmallSymbolWidth
           } else {
-            this.xadvance = this.maxSmallSymbolWidth
+            this.xadvanceCurrent = this.maxSmallSymbolWidth
           }
-          this.yadvance = frame.h //+ Number(this.changeYAdvance)
+          this.yadvance =  sourceSize.h //+ Number(this.changeYAdvance)
         }
 
         //define xadvance for plain symbols
         else {
-          if (this.GeneralxAdvance === undefined) {
-
-            this.xadvanceCurrent = Number(this.getMaxSymbolWidthFromJSON())
-          }
-
-
+         // console.log("plane symbol")
         }
-        if(this.xadvanceCurrent) {
-          xoffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
-        }
-        else {
-          //this.xadvanceCurrent = this.xadvanceCurrent
-        }
-        yoffset = (Number(this.yadvance)- sourceSize.h) / 2
 
-        //console.warn(this.GeneralxAdvance, this.xadvance, yoffset, xoffset);
+        this.xOffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
+        this.yOffset = (Number(this.yadvance)- sourceSize.h) / 2
 
-        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${xoffset}" yoffset="${yoffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.inputSymbols[index]} -->\n`
+        console.log(this.xadvanceCurrent)
+        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.inputSymbols[index]} -->\n`
           this.XMLText += row
         });
 

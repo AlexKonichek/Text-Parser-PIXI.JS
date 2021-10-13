@@ -116,25 +116,15 @@
               :XMLText="XMLText"
               :JSONtext="loadedJSON"
               :inputSymbols="symbolsArr"
-              :GeneralxAdvance="maxSymbolWidth"
+              :GeneralxAdvance="xAdvance"
+              :maxSmallSymbolWidth="maxSmallSymbolWidth"
+
           />
 
           <Renderer
               v-if="readyToRender"
-              ref='PIXIRenderer'
-              :render="readyToRender"
-              :changeXAdvance="changeXAdvance"
-              :changeYAdvance="changeYAdvance"
-              :charCodeArr="charCodeArr"
-              :letterSpasing="checkedLetterSpasing"
-              :json="loadedJSON"
-              :image="loadedPNG"
-              :scale="scale"
-              :coordinatesArr="coordinatesArr"
-              :canvasSize="canvasSize"
-              :showBorderCheckbox="checkedSpriteBorder"
-              :frameW="framesWidths"
-              :frameH="framesHeights"
+              symbols="symbolsArr"
+
           />
         </div>
       </div>
@@ -152,6 +142,8 @@ export default {
   components: {Renderer, OpenFile, XML_Creator},
   data() {
     return {
+      inputSymbolsArr:[],
+      xAdvance:null,
       arrSmallSymbolsWidth:[],
       allowToCreateXML: false,
       font: 'font family',
@@ -209,7 +201,6 @@ export default {
   },
   watch: {
     loadedJSON: function () {
-      this.preparseJSON()
       this.showOpenFile = false
       //this.showMessage()
       this.showSidePanel = true
@@ -217,8 +208,10 @@ export default {
       //this.showImagePreview = true
     },
     inputSymbols: function () {
-      console.warn("change inputSymbols")
+      console.log("inputSymbols")
+      this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
+      this.preparseJSON()
     },
     changeXAdvance: function () {
       //this.JSON2XML()
@@ -228,6 +221,8 @@ export default {
       //this.JSON2XML()
     },
     maxSymbolWidth: function () {
+
+      this.xAdvance = Number(this.maxSymbolWidth)
 
     },
     maxSmallSymbolWidth: function () {
@@ -254,22 +249,34 @@ export default {
         return this.maxSymbolWidth !== undefined ? this.maxSymbolWidth : this.maxSymbolWidthFromJSON;
       }
     },
-    maxSmallSymbolWidthModel: {
-      set(value) {
-        this.maxSmallSymbolWidth = value;
-        //console.log(value, this.maxSmallSymbolWidth);
-      },
-
-      get() {
-        return this.maxSmallSymbolWidth !== undefined ? this.maxSmallSymbolWidth : this.maxSmallSymbolWidthFromJSON;
-      }
-    }
 
   },
   methods: {
-    CreateXML () {
-      this.allowToCreateXML = true
-      this.showCreateXMLButton = false
+    isAllReady() {
+      if(!this.maxSymbolWidth) {
+        this.xAdvance = this.maxSymbolWidthModel
+      } else {
+        this.xAdvance = this.maxSymbolWidth
+      }
+     // console.log(this.xAdvance)
+    //  console.log("this.maxSymbolWidthFromJSON", this.maxSymbolWidthFromJSON)
+    //  console.log("this.maxSymbolWidth", this.maxSymbolWidth)
+      let dataIsReady = false
+      if(this.xAdvance && this.maxSmallSymbolWidth && this.symbolsArr.length>0){
+        console.log(this.xAdvance, this.maxSmallSymbolWidth, this.symbolsArr.length)
+        //dataIsReady = true
+      }
+      else {
+        console.log(this.xAdvance, this.maxSmallSymbolWidth, this.symbolsArr.length)
+      }
+      return dataIsReady
+
+    },
+    CreateXML() {
+      if(this.isAllReady()){
+        this.allowToCreateXML = true
+        this.showCreateXMLButton = false
+      }
     },
     showMessage() {
       this.showModal = true
@@ -277,26 +284,25 @@ export default {
 
     },
     preparseJSON() {
-      console.warn("preparseJSON");
+     // console.warn("preparseJSON");
       let data = JSON.parse(this.loadedJSON)
       let frames = Object.values(data)[0]
       this.framesArr = Object.values(frames)
-      let inputSymbolsArr = this.inputSymbols.split("");
       this.framesArr.forEach((frame, index) => {
-        if (inputSymbolsArr[index] === "." || inputSymbolsArr[index] === "," || inputSymbolsArr[index] === "×") {
-          this.arrSmallSymbolsWidth.push(inputSymbolsArr[index])
-          this.maxSmallSymbolWidth = Math.max(...this.arrSmallSymbolsWidth)
-        }
-        this.framesWidths.push(frame.sourceSize.w)
+         if(this.symbolsArr[index]==="," || this.symbolsArr[index]==="." || this.symbolsArr[index]==="×") {
+           this.arrSmallSymbolsWidth.push(Number(frame.sourceSize.w))
+         }
       })
+      this.maxSmallSymbolWidth = Math.max(...this.arrSmallSymbolsWidth)
+
 
       this.maxSymbolWidthFromJSON = Math.max(...this.framesWidths)
-      console.log(this.maxSymbolWidthFromJSON);
+     // console.log(this.maxSymbolWidthFromJSON);
     },
 
     RequiredSymbolsHandler(e) {
 
-      console.log("RequiredSymbolsHandler", e.target.value)
+     // console.log("RequiredSymbolsHandler", e.target.value)
 
       let symbols = e.target.value
       this.symbolsArr =symbols.split("");
@@ -313,7 +319,7 @@ export default {
       //this.prepareToRender()
     },
     inputHandler() {
-      console.log("inputHandler: choose symbols set is touched")
+    //  console.log("inputHandler: choose symbols set is touched")
       this.showCreateXMLButton = true
 
       //this.updateData()
@@ -329,7 +335,7 @@ export default {
     },
     xAdvanceInputHandler(e)
     {
-      console.log('xAdvanceInputHandler')
+    //  console.log('xAdvanceInputHandler')
       this.currentXAdvance = e.target.value
       //this.JSON2XML()
     }
