@@ -1,5 +1,5 @@
 <template lang="html">
-  <main class="bg-secondary ">
+  <main class="bg-secondary">
     <div class="w-100 0">
       <div class="row">
         <div class="col-sm-3 mr-2">
@@ -110,7 +110,7 @@
                     @image="loadedPNG = $event"
 
           ></OpenFile>
-          <button v-if="showCreateXMLButton" class="btn btn-dark m-4"  v-on:click="CreateXML">Create</button>
+          <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
           <XML_Creator v-if="isDataReady"
               :allowToCreateXML="allowToCreateXML"
               :JSONtext="loadedJSON"

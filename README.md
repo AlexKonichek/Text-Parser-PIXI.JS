@@ -1,5 +1,8 @@
 # parser
-
+need to implement:
+  1.add tooltip about right symbols order 
+  2.add image preview
+  3.add preview mode for editting xadvance 
 ## Project setup
 ```
 npm install
