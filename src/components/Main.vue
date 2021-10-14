@@ -21,7 +21,7 @@
               Not enough symbols for parsing
             </div>
             <label  class="label text-white h4" for="Select">Choose symbols set</label>
-            <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="inputHandler" >
+            <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
               <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
               <option>{{ this.selectOption2 }}</option>
             </select>
@@ -162,7 +162,7 @@ export default {
       currentXAdvance: 0,
       dotXAdvance: 0,
       comaXAdvance: 0,
-      selectOption1: '0123456789,.×',
+      selectOption1: '.,×0123456789',
       selectOption2: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       showModal:false,
       showCreateXMLButton:false,
@@ -205,27 +205,19 @@ export default {
     loadedJSON: function () {
       this.showOpenFile = false
       this.showImagePreview = true
-      //this.showMessage()
       this.showSidePanel = true
-      //this.preparseJSON()
+    
       //this.allowToCreateXML = true
      
     },
     inputSymbols: function () {
-      console.log("inputSymbols")
+      console.log("inputSymbols is changed")
       this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
       
     },
-    changeXAdvance: function () {
-      //this.JSON2XML()
-    },
-
-    changeYAdvance: function () {
-      //this.JSON2XML()
-    },
+    
     maxSymbolWidth: function () {
-
       this.finalXAdvance = Number(this.maxSymbolWidth)
 
     },
@@ -268,16 +260,15 @@ export default {
         this.finalXAdvance = this.maxSymbolWidth
       }
 
-
+      
       if(this.finalXAdvance>0 && this.loadedJSON && this.symbolsArr.length>0 && this.maxSmallSymbolWidth && this.arrSymbolsWidths.length>0){
         this.isDataReady = true
         this.showCreateXMLButton = true
+      
     
         console.warn("data is ready")
       }else {
-          console.log(this.loadedJSON)
-          console.log(this.symbolsArr)
-          console.log(this.maxSmallSymbolWidth, this.arrSymbolsWidths)
+          throw new Error("data is not ready")
       }
 
     },
@@ -285,14 +276,12 @@ export default {
       this.allowToCreateXML = true
       this.showCreateXMLButton = false
     },
+     
 
-    showMessage() {
-      this.showModal = true
-      //this.preparseJSON()
-
-    },
     preparseJSON() {
       console.warn("preparseJSON");
+      this.arrSmallSymbolsWidth = []
+      this.arrSymbolsWidths = []
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".": this.arrSmallSymbolsWidth.push(frame.frame.w)                
@@ -308,25 +297,32 @@ export default {
         }
       })
       this.isAllReady()
-      
-      
-
-
-      //this.maxSymbolWidthFromJSON = Math.max(...this.framesWidths)
-     // console.log(this.maxSymbolWidthFromJSON);
     },
 
     RequiredSymbolsHandler(e) {
 
       console.log("RequiredSymbolsHandler", e.target.value)
-      
-      let symbols = e.target.value
-      this.symbolsArr = symbols.split("");
+      this.inputSymbols = e.target.value
+      //let symbols = e.target.value
+      this.symbolsArr = this.inputSymbols.split("");
       let data = JSON.parse(this.loadedJSON)
       let frames = Object.values(data)[0]
       this.framesArr = Object.values(frames)
 
       //input symbols verification
+      this.validateSymbolsForm()
+    },
+    chooseSymbolsHandler(e) {
+      console.log("chooseSymbolsHandler", e.target.value)
+      this.RequiredSymbolsHandler(e)
+      this.validateSymbolsForm()
+  
+
+      //this.updateData()
+      //this.prepareToRender()
+    },
+
+    validateSymbolsForm() {
       if(this.symbolsArr.length === this.framesArr.length) {
         this.showInputError = false
         this.preparseJSON()
@@ -334,17 +330,9 @@ export default {
       }else {
         this.showInputError = true
       }
-
-      //this.updateData()
-      //this.prepareToRender()
     },
-    inputHandler() {
-    //  console.log("inputHandler: choose symbols set is touched")
-      this.showCreateXMLButton = true
 
-      //this.updateData()
-      //this.prepareToRender()
-    },
+
     updateData()
     {
       this.comaAndDotWidthsArr = [],
