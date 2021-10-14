@@ -4,14 +4,14 @@
       <div class="col-sm-6">
         <div class="form-group">
           <label class="h4 text-dark" for="JSON">JSON</label>
-          <textarea class="form-control" id="JSON" v-model="JSONtext" rows="22" cols="50"></textarea>
+          <textarea class="form-control" id="JSON" v-model="JSONtext" rows="20" cols="50"></textarea>
 
         </div>
       </div>
       <div  class="col-sm-6">
         <div class="form-group">
           <label class="h4 text-dark" for="XML">XML</label>
-          <textarea class="form-control" id="XML" v-model="XMLText" rows="22" cols="50"></textarea>
+          <textarea class="form-control" id="XML" v-model="XMLText" rows="20" cols="50"></textarea>
           <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
         </div>
       </div>
@@ -33,7 +33,6 @@ export default {
       framesWidths: [],
       framesHeights: [],
       coordinatesArr:[],
-      symbolsArr: [],
       charCodeArr:[],
       XMLText:"",
       font: 'font family',
@@ -44,17 +43,19 @@ export default {
       yOffset:null
     }
   },
-  props: ["XML", "JSONtext", "inputSymbols", "allowToCreateXML", "GeneralxAdvance", "MaxSymbolsWidth","maxSmallSymbolWidth"],
+  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance", "arrSymbolsWidths","smallSymbolsXadvance"],
   watch: {
     allowToCreateXML: function () {
       if(this.allowToCreateXML) {
         this.fillCharcodeArr()
-        this.parseJSONtext();
+        this.prepareDataForXML();
       }
     },
 
-    GeneralxAdvance: function () {
-      this.xadvanceCurrent = Number(this.GeneralxAdvance)
+    finalXAdvance: function () {
+      
+      this.xadvanceCurrent = Number(this.finalXAdvance)
+      console.log("finalXAdvance change in xml creator", this.xadvanceCurrent)
       this.JSON2XML()
     },
     inputSymbols: function () {
@@ -63,7 +64,7 @@ export default {
   },
   computed: {},
   methods: {
-    parseJSONtext() {
+    prepareDataForXML() {
       let data = JSON.parse(this.JSONtext)
       let frames = Object.values(data)[0]
       //this.canvasSize = Object.values(data)[1].size
@@ -75,11 +76,28 @@ export default {
         this.framesWidths.push(frame.sourceSize.w)
         this.framesHeights.push(frame.sourceSize.h)
       })
-      this.framesNames = Object.keys(frames)
-      this.maxWidthReady = true
-      this.JSON2XML()
-      //this.$refs.inputSymbols.focus()
-      //this.prepareToRender()
+      this.yadvance = this.maxSymbolHeightFromJSON()
+
+      this.isDataReady();
+  
+    },
+    isDataReady(){
+      if(this.font 
+         && this.framesHeights.length > 0
+         && this.framesWidths.length > 0
+         && this.framesArr.length > 0
+         && this.charCodeArr.length > 0
+         && this.finalXAdvance){
+           console.warn("Data for XML is ready")
+           this.JSON2XML()
+           this.showTextArea = true
+
+
+         }
+         else {
+           throw new Error("Data for XML is not ready")
+         }
+
     },
     downloadXML() {
       let xmltext = this.XMLText;
@@ -94,21 +112,19 @@ export default {
       pom.classList.add('dragout');
       pom.click();
     },
-    getMaxSymbolWidthFromJSON() {
-      return Math.max(...this.framesWidths)
-    },
+
     maxSymbolHeightFromJSON() {
       return Math.max(...this.framesHeights)
     },
+
     fillCharcodeArr() {
-      this.charCodeArr = []
-      this.inputSymbols.forEach(symbol => {
+      this.symbolsArr.forEach(symbol => {
         this.charCodeArr.push(symbol.charCodeAt(0))
       })
+      console.log("fillCharcodeArr:", this.charCodeArr )
     },
 
     JSON2XML() {
-
      // console.warn("JSON2XML");
       //first part of XML file
       this.XMLText = `
@@ -119,41 +135,28 @@ export default {
     <page id="0" file="${this.font}.png" />
   </pages>
   <chars count="${this.framesArr.length + 2}">\n`
-      this.yadvance = this.maxSymbolHeightFromJSON() //+ Number(this.changeYAdvance)
+       //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
 
-        //fill coordinates array for rendering
-        let coordinates = {
-          x: frame.x,
-          y: frame.y,
-          sourceSize: {
-            w: sourceSize.w,
-            h: sourceSize.h
-          }
-        }
-        this.coordinatesArr.push(coordinates)
-
-        // //define xadvance for dot,comma or similar small symbol
-        if(this.inputSymbols[index] === "." || this.inputSymbols[index] === "," || this.inputSymbols[index] === "×" ) {
-          if (this.maxSmallSymbolWidth) {
-            this.xadvanceCurrent = this.maxSmallSymbolWidth
-          } else {
-            this.xadvanceCurrent = this.maxSmallSymbolWidth
-          }
-          this.yadvance =  sourceSize.h //+ Number(this.changeYAdvance)
+         //define xadvance for dot,comma or similar small symbol
+        if(this.smallSymbolsXadvance) {
+            //this.xadvanceCurrent = this.smallSymbolsXadvance
+            this.yadvance =  sourceSize.h
         }
 
         //define xadvance for plain symbols
         else {
-         // console.log("plane symbol")
+           this.xadvanceCurrent = this.finalXAdvance
         }
+        this.xadvanceCurrent = this.finalXAdvance
 
         this.xOffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
         this.yOffset = (Number(this.yadvance)- sourceSize.h) / 2
 
         console.log(this.xadvanceCurrent)
-        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.inputSymbols[index]} -->\n`
+
+        let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
           this.XMLText += row
         });
 
@@ -164,12 +167,8 @@ export default {
         <kernings count="0">
         </kernings>
         </font>`
-     this.showTextArea = true
     }
   }
 }
-
-
-
 
 </script>
