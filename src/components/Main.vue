@@ -20,7 +20,9 @@
               </div>
             </div>
             <div v-if="showInputError" class="alert alert-danger" role="alert">
-              Not enough symbols for parsing
+             <p> <b>Not enough symbols for parsing!</b></p>
+              <p>Should be {{this.framesArr.length}}</p>
+
             </div>
            <div v-if="showForm">
              <label  class="label text-white h4" for="Select">Choose symbols set</label>

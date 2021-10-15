@@ -142,7 +142,7 @@ export default {
          //define xadvance for dot,comma or similar small symbol
         //to do add arr of all possibly small symbols and checking if it have a current symbols
         if(this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×") {
-             console.log(this.symbolsArr[index])
+             console.log(this.symbolsArr[index],)
             //this.xadvanceCurrent = this.smallSymbolsXadvance
             this.yadvance =  sourceSize.h
             this.xadvanceCurrent = this.smallSymbolsXadvance
@@ -152,7 +152,7 @@ export default {
         else {
            this.xadvanceCurrent = this.finalXAdvance
         }
-        this.xadvanceCurrent = this.finalXAdvance
+
 
         this.xOffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
         this.yOffset = (Number(this.yadvance)- sourceSize.h) / 2
