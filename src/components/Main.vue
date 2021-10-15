@@ -29,17 +29,17 @@
                <option>{{ this.selectOption2 }}</option>
              </select>
            </div>
-            <label class="text-white h4" for="font-family">Font family</label>
-            <div class="input-group input-group-lg m-3">
-              <input
-                  type="text"
-                  id="font-family"
-                  ref="inputSymbols"
-                  class="form-control mr-3"
-                  v-model="font"
-                  required
-              >
-            </div>
+<!--            <label class="text-white h4" for="font-family">Font family</label>-->
+<!--            <div class="input-group input-group-lg m-3">-->
+<!--              <input-->
+<!--                  type="text"-->
+<!--                  id="font-family"-->
+<!--                  ref="inputSymbols"-->
+<!--                  class="form-control mr-3"-->
+<!--                  v-model="font"-->
+<!--                  required-->
+<!--              >-->
+<!--            </div>-->
             <label class="text-white h4" for="XAdvance">General XAdvance</label>
             <div class="input-group input-group-lg m-3">
               <input
