@@ -54,7 +54,7 @@
                   type="number"
               >
             </div>
-                        <label class="text-white h4" for="XAdvanceSmall">small symbols xadvance</label>
+                        <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
                         <div class="input-group input-group-lg m-3">
                           <input
                               id="XAdvanceSmall"
