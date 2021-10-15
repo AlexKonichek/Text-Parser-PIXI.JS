@@ -2,7 +2,7 @@
  <div>
     <div v-if="showOpenFile">
       <label class="m-3">
-        Open Files
+        <b>Please, choose your files</b>
         <input type="file" class="btn btn-secondary btn-lg m-3" multiple accept="application/JSON,image/*" @change="loadResources" >
       </label>
     </div>

@@ -127,6 +127,14 @@
                     @image="loadedPNG = $event"
 
           ></OpenFile>
+          <div v-if="showFrameNamesOrderMessage" class="">
+            <h2>Please, put symbols in right order or select it from selector below form</h2>
+            <ul>
+              <li v-for="(name,index) in this.frameNamesArr" :key="name">
+               <b> {{index+1}}: {{name}}</b>
+              </li>
+            </ul>
+          </div>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
           <XML_Creator v-if="isDataReady"
                        :finalSmallXAdvance="finalSmallXAdvance"
@@ -161,6 +169,7 @@ export default {
   components: {Renderer, OpenFile, XML_Creator},
   data() {
     return {
+      frameNamesArr: [],
       isDataReady:false,
       inputSymbolsArr:[],
       xAdvance:null,
@@ -196,6 +205,7 @@ export default {
       showLetterSpacingModeCheckbox: false,
       showShiftX: false,
       showTextArea: false,
+      showFrameNamesOrderMessage:false,
       arrSymbolsWidths: [],
       symbolsArr: [],
       sourceSizeW: 0,
@@ -225,6 +235,7 @@ export default {
   watch: {
     loadedJSON: function () {
       this.showOpenFile = false
+      this.createShowFrameNameOrderList()
       this.showImagePreview = true
       this.showSidePanel = true
     
@@ -284,6 +295,15 @@ export default {
 
   },
   methods: {
+    createShowFrameNameOrderList() {
+      let data = JSON.parse(this.loadedJSON)
+      let frames = Object.values(data)[0]
+      this.frameNamesArr = Object.keys(frames).map((name, index) =>name.split(".")[0])
+      console.log(this.frameNamesArr)
+      this.showFrameNamesOrderMessage = true
+
+    },
+
     isAllReady() {
       console.log("checking if all data ready")
       if(this.maxSymbolWidth===undefined) {
@@ -311,6 +331,7 @@ export default {
       this.allowToCreateXML = true
       this.showCreateXMLButton = false
       this.showForm =false
+      this.showFrameNamesOrderMessage = false
     },
      
 
@@ -397,5 +418,9 @@ export default {
     }
   }
 }
-
 </script>
+<style>
+  ul {
+    list-style: none;
+  }
+</style>
