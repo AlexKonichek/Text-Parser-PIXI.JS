@@ -122,6 +122,7 @@
               :finalXAdvance="finalXAdvance"
               :smallSymbolsXadvance="maxSmallSymbolWidth"
               :arrSymbolsWidths="arrSymbolsWidths"
+              :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
 
           />
 
@@ -290,14 +291,14 @@ export default {
       this.arrSymbolsWidths = []
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
-          case ".": this.arrSmallSymbolsWidth.push(frame.frame.w)                
+          case ".": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
             break;
-          case ",": this.arrSmallSymbolsWidth.push(frame.frame.w)       
+          case ",": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
             break;
-          case "×": this.arrSmallSymbolsWidth.push(frame.frame.w)         
+          case "×": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
             break;
         
-          default:this.arrSymbolsWidths.push(frame.frame.w)
+          default:this.arrSymbolsWidths.push(frame.sourceSize.w)
             break;
 
         }

@@ -43,7 +43,7 @@ export default {
       yOffset:null
     }
   },
-  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance", "arrSymbolsWidths","smallSymbolsXadvance"],
+  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance", "arrSymbolsWidths","arrSmallSymbolsWidth","smallSymbolsXadvance"],
   watch: {
     allowToCreateXML: function () {
       if(this.allowToCreateXML) {
@@ -140,9 +140,12 @@ export default {
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
 
          //define xadvance for dot,comma or similar small symbol
-        if(this.smallSymbolsXadvance) {
+        //to do add arr of all possibly small symbols and checking if it have a current symbols
+        if(this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×") {
+             console.log(this.symbolsArr[index])
             //this.xadvanceCurrent = this.smallSymbolsXadvance
             this.yadvance =  sourceSize.h
+            this.xadvanceCurrent = this.smallSymbolsXadvance
         }
 
         //define xadvance for plain symbols
