@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-sm-3 mr-2">
           <div v-if="showSidePanel" class="m-3">
-            <div v-if="showForm">
+            <div>
               <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
               <div class="input-group input-group-lg m-3">
                 <input
@@ -232,9 +232,10 @@ export default {
      
     },
     inputSymbols: function () {
-      console.log("inputSymbols is changed")
+
       this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
+      console.log("inputSymbols is changed", this.symbolsArr)
       this.validateSymbolsForm()
       
     },

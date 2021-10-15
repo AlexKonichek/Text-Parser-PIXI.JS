@@ -61,8 +61,10 @@ export default {
       console.log("finalSmallXAdvance change in xml creator", this.finalSmallXAdvance)
       this.JSON2XML()
     },
-    inputSymbols: function () {
-      //this.JSON2XML()
+    symbolsArr: function () {
+      console.log("symbolsArr in XML-creatore is changed")
+      this.fillCharcodeArr()
+      this.JSON2XML()
     }
   },
   computed: {},
@@ -121,6 +123,7 @@ export default {
     },
 
     fillCharcodeArr() {
+      this.charCodeArr = []
       this.symbolsArr.forEach(symbol => {
         this.charCodeArr.push(symbol.charCodeAt(0))
       })
