@@ -43,7 +43,7 @@ export default {
       yOffset:null
     }
   },
-  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance", "arrSymbolsWidths","arrSmallSymbolsWidth","smallSymbolsXadvance"],
+  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance"],
   watch: {
     allowToCreateXML: function () {
       if(this.allowToCreateXML) {
@@ -53,9 +53,12 @@ export default {
     },
 
     finalXAdvance: function () {
-      
       this.xadvanceCurrent = Number(this.finalXAdvance)
       console.log("finalXAdvance change in xml creator", this.xadvanceCurrent)
+      this.JSON2XML()
+    },
+    finalSmallXAdvance: function () {
+      console.log("finalSmallXAdvance change in xml creator", this.finalSmallXAdvance)
       this.JSON2XML()
     },
     inputSymbols: function () {
@@ -145,7 +148,7 @@ export default {
              console.log(this.symbolsArr[index],)
             //this.xadvanceCurrent = this.smallSymbolsXadvance
             this.yadvance =  sourceSize.h
-            this.xadvanceCurrent = this.smallSymbolsXadvance
+            this.xadvanceCurrent = this.finalSmallXAdvance
         }
 
         //define xadvance for plain symbols

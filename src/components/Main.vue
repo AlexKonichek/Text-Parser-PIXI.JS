@@ -42,7 +42,7 @@
 <!--                  required-->
 <!--              >-->
 <!--            </div>-->
-            <label class="text-white h4" for="XAdvance">General XAdvance</label>
+            <label class="text-white h4" for="XAdvance">general xadvance</label>
             <div class="input-group input-group-lg m-3">
               <input
                   id="XAdvance"
@@ -54,19 +54,30 @@
                   type="number"
               >
             </div>
-            <!--            <label class="text-white h4" for="XAdvanceSmall">Small symbol XAdvance</label>-->
-            <!--            <div class="input-group input-group-lg m-3">-->
-            <!--              <input-->
-            <!--                  id="XAdvanceSmall"-->
-            <!--                  class="form-control mr-3"-->
-            <!--                  ref="XAdvance"-->
-            <!--                  v-model="maxSmallSymbolWidthModel"-->
-            <!--                  step="1"-->
-            <!--                  min="1"-->
-            <!--                  type="number"-->
-            <!--              >-->
-            <!--            </div>-->
-
+                        <label class="text-white h4" for="XAdvanceSmall">small symbols xadvance</label>
+                        <div class="input-group input-group-lg m-3">
+                          <input
+                              id="XAdvanceSmall"
+                              class="form-control mr-3"
+                              ref="XAdvance"
+                              v-model="maxSmallSymbolWidthModel"
+                              step="1"
+                              min="1"
+                              type="number"
+                          >
+                        </div>
+<!--            <label class="text-white h4" for="XAdvanceForSmallSymbols">xadvance for small symbols</label>-->
+<!--            <div class="input-group input-group-lg m-3">-->
+<!--              <input-->
+<!--                  id="XAdvanceForSmallSymbols"-->
+<!--                  class="form-control mr-3"-->
+<!--                  ref="XAdvance"-->
+<!--                  v-model="maxSmallSymbolWidthModel"-->
+<!--                  step="1"-->
+<!--                  min="1"-->
+<!--                  type="number"-->
+<!--              >-->
+<!--            </div>-->
             <div v-if="checkedLetterSpasing">
               <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
               <div class="input-group input-group-lg m-3">
@@ -118,13 +129,14 @@
           ></OpenFile>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
           <XML_Creator v-if="isDataReady"
-              :allowToCreateXML="allowToCreateXML"
-              :JSONtext="loadedJSON"
-              :symbolsArr="symbolsArr"
-              :finalXAdvance="finalXAdvance"
-              :smallSymbolsXadvance="maxSmallSymbolWidth"
-              :arrSymbolsWidths="arrSymbolsWidths"
-              :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
+                       :finalSmallXAdvance="finalSmallXAdvance"
+                       :allowToCreateXML="allowToCreateXML"
+                       :JSONtext="loadedJSON"
+                       :symbolsArr="symbolsArr"
+                       :finalXAdvance="finalXAdvance"
+                       :smallSymbolsXadvance="maxSmallSymbolWidth"
+                       :arrSymbolsWidths="arrSymbolsWidths"
+                       :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
 
           />
 
@@ -154,6 +166,7 @@ export default {
       xAdvance:null,
       arrSmallSymbolsWidth:[],
       allowToCreateXML: false,
+      finalSmallXAdvance: null,
       finalXAdvance:null,
       font: 'font family',
       comaOrDotExist: false,
@@ -196,6 +209,7 @@ export default {
       maxSymbolWidthFromJSON: 0,
       maxSmallSymbolWidthFromJSON: 0,
       maxSymbolWidth: undefined,
+      maxSmallSymbolWidth: undefined,
       maxWidthReady: false,
       framesArr:[],
       JSONFile: {},
@@ -230,7 +244,7 @@ export default {
 
     },
     maxSmallSymbolWidth: function () {
-      //this.JSON2XML()
+      this.finalSmallXAdvance = Number(this.maxSmallSymbolWidth)
     },
 
     charCodeArr: function () {
@@ -245,10 +259,19 @@ export default {
       return Math.max(...this.arrSymbolsWidths)
 
     },
-    maxSmallSymbolWidth() {
+
+   xadvanceSmall() {
       return Math.max(...this.arrSmallSymbolsWidth)
     },
 
+    maxSmallSymbolWidthModel: {
+      set(value) {
+        this.maxSmallSymbolWidth = value;
+      },
+      get() {
+        return this.maxSmallSymbolWidth !== undefined ? this.maxSmallSymbolWidth : this.xadvanceSmall
+      }
+    },
     maxSymbolWidthModel: {
       set(value) {
         this.maxSymbolWidth = value;
@@ -267,13 +290,16 @@ export default {
       } else {
         this.finalXAdvance = this.maxSymbolWidth
       }
+      if(this.maxSmallSymbolWidth===undefined) {
+        this.finalSmallXAdvance = this.xadvanceSmall
+      } else {
+        this.finalSmallXAdvance = this.maxSmallSymbolWidth
+      }
 
       
-      if(this.finalXAdvance>0 && this.loadedJSON && this.symbolsArr.length>0 && this.maxSmallSymbolWidth && this.arrSymbolsWidths.length>0){
+      if(this.finalXAdvance>0 && this.loadedJSON && this.symbolsArr.length>0 && this.arrSymbolsWidths.length>0){
         this.isDataReady = true
         this.showCreateXMLButton = true
-      
-    
         console.warn("data is ready")
       }else {
           throw new Error("data is not ready")
