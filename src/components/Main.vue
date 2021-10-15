@@ -54,30 +54,21 @@
                   type="number"
               >
             </div>
-                        <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
-                        <div class="input-group input-group-lg m-3">
-                          <input
-                              id="XAdvanceSmall"
-                              class="form-control mr-3"
-                              ref="XAdvance"
-                              v-model="maxSmallSymbolWidthModel"
-                              step="1"
-                              min="1"
-                              type="number"
-                          >
+                        <div v-if="showXadvanceForSmallSymbols">
+                          <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
+                          <div class="input-group input-group-lg m-3">
+                            <input
+                                id="XAdvanceSmall"
+                                class="form-control mr-3"
+                                ref="XAdvance"
+                                v-model="maxSmallSymbolWidthModel"
+                                step="1"
+                                min="1"
+                                type="number"
+                            >
+                          </div>
                         </div>
-<!--            <label class="text-white h4" for="XAdvanceForSmallSymbols">xadvance for small symbols</label>-->
-<!--            <div class="input-group input-group-lg m-3">-->
-<!--              <input-->
-<!--                  id="XAdvanceForSmallSymbols"-->
-<!--                  class="form-control mr-3"-->
-<!--                  ref="XAdvance"-->
-<!--                  v-model="maxSmallSymbolWidthModel"-->
-<!--                  step="1"-->
-<!--                  min="1"-->
-<!--                  type="number"-->
-<!--              >-->
-<!--            </div>-->
+
             <div v-if="checkedLetterSpasing">
               <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
               <div class="input-group input-group-lg m-3">
@@ -196,6 +187,7 @@ export default {
       showForm:true,
       showModal:false,
       showCreateXMLButton:false,
+      showXadvanceForSmallSymbols:true,
       showImagePreview:false,
       showOpenFile:true,
       showSidePanel:false,
@@ -238,19 +230,17 @@ export default {
       this.createShowFrameNameOrderList()
       this.showImagePreview = true
       this.showSidePanel = true
-    
+
       //this.allowToCreateXML = true
-     
+
     },
     inputSymbols: function () {
-
       this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
       console.log("inputSymbols is changed", this.symbolsArr)
       this.validateSymbolsForm()
-      
     },
-    
+
     maxSymbolWidth: function () {
       this.finalXAdvance = Number(this.maxSymbolWidth)
 
@@ -265,6 +255,7 @@ export default {
         this.charCodesAndNamesArr.push(charCodeAndName)
       })
     },
+
   },
   computed: {
     xadvance() {
@@ -317,7 +308,7 @@ export default {
         this.finalSmallXAdvance = this.maxSmallSymbolWidth
       }
 
-      
+
       if(this.finalXAdvance>0 && this.loadedJSON && this.symbolsArr.length>0 && this.arrSymbolsWidths.length>0){
         this.isDataReady = true
         this.showCreateXMLButton = true
@@ -332,8 +323,11 @@ export default {
       this.showCreateXMLButton = false
       this.showForm =false
       this.showFrameNamesOrderMessage = false
+      if(this.arrSmallSymbolsWidth.length===0){
+        this.showXadvanceForSmallSymbols = false
+      }
     },
-     
+
 
     preparseJSON() {
       console.warn("preparseJSON");
@@ -347,7 +341,7 @@ export default {
             break;
           case "×": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
             break;
-        
+
           default:this.arrSymbolsWidths.push(frame.sourceSize.w)
             break;
 
@@ -373,7 +367,7 @@ export default {
       console.log("chooseSymbolsHandler", e.target.value)
       this.RequiredSymbolsHandler(e)
       this.validateSymbolsForm()
-  
+
 
       //this.updateData()
       //this.prepareToRender()
@@ -383,7 +377,7 @@ export default {
       if(this.symbolsArr.length === this.framesArr.length) {
         this.showInputError = false
         this.preparseJSON()
-        
+
       }else {
         this.showInputError = true
         this.showCreateXMLButton = false
