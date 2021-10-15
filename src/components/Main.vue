@@ -4,27 +4,31 @@
       <div class="row">
         <div class="col-sm-3 mr-2">
           <div v-if="showSidePanel" class="m-3">
-            <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
-            <div class="input-group input-group-lg m-3">
-              <input
-                  type="text"
-                  id="symbols"
-                  ref="inputSymbols"
-                  class="form-control mr-3"
-                  v-model="inputSymbols"
-                  v-on:change="RequiredSymbolsHandler"
-                  required
-                  placeholder="paste your symbols in right order"
-              >
+            <div v-if="showForm">
+              <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
+              <div class="input-group input-group-lg m-3">
+                <input
+                    type="text"
+                    id="symbols"
+                    ref="inputSymbols"
+                    class="form-control mr-3"
+                    v-model="inputSymbols"
+                    v-on:change="RequiredSymbolsHandler"
+                    required
+                    placeholder="paste your symbols in right order"
+                >
+              </div>
             </div>
             <div v-if="showInputError" class="alert alert-danger" role="alert">
               Not enough symbols for parsing
             </div>
-            <label  class="label text-white h4" for="Select">Choose symbols set</label>
-            <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
-              <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
-              <option>{{ this.selectOption2 }}</option>
-            </select>
+           <div v-if="showForm">
+             <label  class="label text-white h4" for="Select">Choose symbols set</label>
+             <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
+               <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
+               <option>{{ this.selectOption2 }}</option>
+             </select>
+           </div>
             <label class="text-white h4" for="font-family">Font family</label>
             <div class="input-group input-group-lg m-3">
               <input
@@ -164,6 +168,7 @@ export default {
       comaXAdvance: 0,
       selectOption1: '.,×0123456789',
       selectOption2: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      showForm:true,
       showModal:false,
       showCreateXMLButton:false,
       showImagePreview:false,
@@ -188,7 +193,6 @@ export default {
       maxSymbolWidthFromJSON: 0,
       maxSmallSymbolWidthFromJSON: 0,
       maxSymbolWidth: undefined,
-    
       maxWidthReady: false,
       framesArr:[],
       JSONFile: {},
@@ -214,6 +218,7 @@ export default {
       console.log("inputSymbols is changed")
       this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
+      this.validateSymbolsForm()
       
     },
     
@@ -275,6 +280,7 @@ export default {
     CreateXML() {
       this.allowToCreateXML = true
       this.showCreateXMLButton = false
+      this.showForm =false
     },
      
 
@@ -329,6 +335,7 @@ export default {
         
       }else {
         this.showInputError = true
+        this.showCreateXMLButton = false
       }
     },
 
