@@ -25,7 +25,8 @@ export default {
     return {
       showImage:false,
       showOpenFile:true,
-      showError:false
+      showError:false,
+      ImgUrl:null
     }
   },
   methods: {
@@ -52,9 +53,15 @@ export default {
             }
             if(file.type ==="image/png") {
               imageFile=file
+              this.ImgUrl = URL.createObjectURL(file);
+              this.$emit("getImgUrl",this.ImgUrl)
+
                ImagePromise =  new Promise((resolve, reject) => {
                 const fileReader = new FileReader()
-                fileReader.onload = event => resolve(event.target.result)
+                fileReader.onload = event => {
+
+                  resolve(event.target.result)
+                }
                 fileReader.onerror = error => reject(error)
                 fileReader.readAsDataURL(imageFile);
               })

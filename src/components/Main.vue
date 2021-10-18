@@ -116,15 +116,14 @@
           <OpenFile v-if="showOpenFile"
                     @json="loadedJSON = $event"
                     @image="loadedPNG = $event"
-
+                    @getImgUrl="imgUrl = $event"
           ></OpenFile>
+          <div id="preview">
+          <img v-if="showImagePreview" :src="imgUrl" width="500"  />
+        </div>
           <div v-if="showFrameNamesOrderMessage" class="">
-            <h2>Please, put symbols in right order or select it from selector below form</h2>
-            <ul>
-              <li v-for="(name,index) in this.frameNamesArr" :key="name">
-               <b> {{index+1}}: {{name}}</b>
-              </li>
-            </ul>
+            <h2>Please, put symbols in right order or select it from selector under symbols form</h2>
+
           </div>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
           <XML_Creator v-if="isDataReady"
@@ -222,6 +221,7 @@ export default {
       xoffset: 0,
       yoffset: 0,
       yadvance: 0,
+      imgUrl:null
     }
   },
   watch: {
@@ -230,9 +230,14 @@ export default {
       this.createShowFrameNameOrderList()
       this.showImagePreview = true
       this.showSidePanel = true
+      console.log(this.imgUrl)
+
 
       //this.allowToCreateXML = true
 
+    },
+    loadedPNG: function () {
+      this.showImagePreview = true
     },
     inputSymbols: function () {
       this.symbolsArr = []
