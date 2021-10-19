@@ -135,13 +135,14 @@
                        :smallSymbolsXadvance="maxSmallSymbolWidth"
                        :arrSymbolsWidths="arrSymbolsWidths"
                        :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
-
           />
 
           <Renderer
-              v-if="readyToRender"
-              symbols="symbolsArr"
-
+              v-if="showRenderer"
+              :canvasHeight="maxSymbolHeightModel"
+              :loadedJSON="loadedJSON"
+              :loadedPNG="loadedPNG"
+              :showRenderer="showRenderer"
           />
         </div>
       </div>
@@ -159,9 +160,12 @@ export default {
   components: {Renderer, OpenFile, XML_Creator},
   data() {
     return {
+      maxSymbolHeight:null,
       frameNamesArr: [],
       isDataReady:false,
       inputSymbolsArr:[],
+      arrSymbolsWidths: [],
+      arrSymbolsHeights:[],
       xAdvance:null,
       arrSmallSymbolsWidth:[],
       allowToCreateXML: false,
@@ -197,11 +201,10 @@ export default {
       showShiftX: false,
       showTextArea: false,
       showFrameNamesOrderMessage:false,
-      arrSymbolsWidths: [],
       symbolsArr: [],
       sourceSizeW: 0,
       sourceSizeH: 0,
-      readyToRender: false,
+      showRenderer: false,
       framesWidths: [],
       framesNames: [],
       //inputSymbols: ",.0123456789×",
@@ -287,6 +290,14 @@ export default {
       get() {
         return this.maxSymbolWidth !== undefined ? this.maxSymbolWidth : this.xadvance;
       }
+    },
+    maxSymbolHeightModel: {
+      set(value) {
+        this.maxSymbolHeight = value;
+      },
+      get() {
+        return Math.max(...this.arrSymbolsHeights)
+      }
     }
 
   },
@@ -326,7 +337,9 @@ export default {
     CreateXML() {
       this.allowToCreateXML = true
       this.showCreateXMLButton = false
+      this.showImagePreview = false
       this.showForm =false
+      this.showRenderer = true
       this.showFrameNamesOrderMessage = false
       if(this.arrSmallSymbolsWidth.length===0){
         this.showXadvanceForSmallSymbols = false
@@ -347,7 +360,9 @@ export default {
           case "×": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
             break;
 
-          default:this.arrSymbolsWidths.push(frame.sourceSize.w)
+          default:this.arrSymbolsWidths.push(frame.sourceSize.w);
+                  this.arrSymbolsHeights.push(frame.sourceSize.h)
+
             break;
 
         }
