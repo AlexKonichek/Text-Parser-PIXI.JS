@@ -45,6 +45,10 @@ export default {
   },
   props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance"],
   watch: {
+    xOffset: function () {
+      console.log("xOffset:",this.xOffset)
+      this.$emit("xOffsetChange",this.xOffset)
+    },
     allowToCreateXML: function () {
       if(this.allowToCreateXML) {
         this.fillCharcodeArr()
@@ -163,7 +167,7 @@ export default {
         this.xOffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
         this.yOffset = (Number(this.yadvance)- sourceSize.h) / 2
 
-        console.log(this.xadvanceCurrent)
+        //console.log(this.xadvanceCurrent)
 
         let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
           this.XMLText += row

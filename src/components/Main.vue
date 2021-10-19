@@ -50,7 +50,6 @@
                   ref="XAdvance"
                   v-model="maxSymbolWidthModel"
                   step="1"
-                  min="1"
                   type="number"
               >
             </div>
@@ -126,7 +125,16 @@
 
           </div>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
+          <Renderer
+              v-if="showRenderer"
+              :canvasHeight="maxSymbolHeightModel"
+              :loadedJSON="loadedJSON"
+              :loadedPNG="loadedPNG"
+              :showRenderer="showRenderer"
+              :xoffset="xoffset"
+          />
           <XML_Creator v-if="isDataReady"
+                       @xOffsetChange="xoffset = $event"
                        :finalSmallXAdvance="finalSmallXAdvance"
                        :allowToCreateXML="allowToCreateXML"
                        :JSONtext="loadedJSON"
@@ -137,13 +145,7 @@
                        :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
           />
 
-          <Renderer
-              v-if="showRenderer"
-              :canvasHeight="maxSymbolHeightModel"
-              :loadedJSON="loadedJSON"
-              :loadedPNG="loadedPNG"
-              :showRenderer="showRenderer"
-          />
+
         </div>
       </div>
       <div class="row"></div>

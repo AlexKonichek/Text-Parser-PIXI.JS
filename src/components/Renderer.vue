@@ -1,8 +1,13 @@
 <template>
   <div class="w-100">
-    <button class="btn btn-dark m-3"  v-on:click="drawPixi">Render</button>
+    <button  v-if="showRenderButton" class="btn btn-success btn-lg m-3"  v-on:click="drawPixi">Render</button>
+    <div class="col-sm-6">
+      <canvas id="pixi"></canvas>
+    </div>
+    <div class="col-sm-6">
 
-    <canvas id="pixi"></canvas>
+    </div>
+
   </div>
 </template>
 
@@ -13,6 +18,8 @@ export default {
   data() {
     return {
       canvasWidths:500,
+      spritesheetWrapper:null,
+      spriteSheetBorder:null,
       app:{},
       loader:{},
       sprites:[],
@@ -24,12 +31,27 @@ export default {
       resolution: 1,
       position: 1,
       x: 0,
-      y: 0
+      y: 0,
+      showRenderButton:true
     }
   },
-  props: ["canvasHeight", "loadedJSON","loadedPNG"],
-
+  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer"],
+  computed: {
+    shiftX(){
+      return this.xoffset
+    }
+  },
   watch:{
+    shiftX: function () {
+      if(this.app.stage) {
+        this.clearStage()
+        this.render()
+      }
+
+    },
+    showRenderer: function () {
+
+    },
     showBorderCheckbox: function () {
       this.renderSymbols()
     },
@@ -44,9 +66,6 @@ export default {
     letterSpasing: function () {
       this.renderSymbols()
     },
-    scale: function () {
-      this.renderSymbols()
-    }
   },
   methods: {
     drawPixi() {
@@ -75,26 +94,22 @@ export default {
         );
         sheet.parse((...args) => {
           this.textures = Object.values(args[0])
-          console.warn(this.textures)
+          //console.warn(this.textures)
+         this.textures.forEach((texture, index) => {
+           //console.warn(index, texture.orig.width, texture.orig.height)
+
+          } )
           this.render()
         });
       })
     },
-    addCanvasBorder() {
-      while(this.app.stage.children[0]) { this.app.stage.removeChild(this.app.stage.children[0]); }
-      let spritesheetWrapper = new PIXI.Container()
-      let spriteSheetBorder = new PIXI.Graphics();
-      spriteSheetBorder.lineStyle(2, 0x000000, 1);
-      spriteSheetBorder.drawRect(0, 0, this.canvasWidths, this.canvasHeight);
-      spriteSheetBorder.endFill();
-      spriteSheetBorder.x = 0;
-      spriteSheetBorder.y = 0;
-      spritesheetWrapper.addChild(spriteSheetBorder)
-      this.app.stage.addChild(spritesheetWrapper);
-    },
-
     render() {
-      this.addCanvasBorder()
+      console.log("render")
+      this.showRenderButton = false
+      this.addCanvasBorder();
+      //console.warn(symbolSprite.width,symbolSprite.height)
+      this.addSymbol(0,0,5, true)
+      this.addSymbol(146+this.shiftX,0,7, true)
 
         //letter spasing mode
       //  if(this.letterSpasing) {
@@ -155,7 +170,49 @@ export default {
       // }
 
 
-    }
+    },
+    addCanvasBorder() {
+      this.spritesheetWrapper = new PIXI.Container()
+      this.spriteSheetBorder = new PIXI.Graphics();
+      this.spriteSheetBorder.lineStyle(2, 0x000000, 1);
+      this.spriteSheetBorder.drawRect(0, 0, this.canvasWidths, this.canvasHeight);
+      this.spriteSheetBorder.endFill();
+      this.spriteSheetBorder.x = 0;
+      this.spriteSheetBorder.y = 0;
+      this.spritesheetWrapper.addChild(this.spriteSheetBorder)
+      this.app.stage.addChild(this.spritesheetWrapper);
+    },
+    addSymbol(x, y, index, border) {
+      let texture = this.textures[index]
+      let spriteContainer = new PIXI.Container()
+      let symbolSprite = PIXI.Sprite.from(texture);
+
+      if(border) {
+        console.warn(symbolSprite.width,symbolSprite.height)
+        let spriteBorder = new PIXI.Graphics();
+        spriteBorder.lineStyle(1,0xDE3249, 1);
+        spriteBorder.drawRect(2, 2, symbolSprite.width-2, symbolSprite.height-2);
+        spriteBorder.endFill();
+        spriteContainer.x = x
+        spriteContainer.y = y
+        spriteContainer.addChild(spriteBorder)
+      }
+      spriteContainer.addChild(symbolSprite)
+      this.spritesheetWrapper.addChild(spriteContainer)
+
+
+    },
+    clearStage() {
+      console.log("clearStage")
+      console.log(this.app)
+
+      if(this.app && this.app.stage.children.length>0){
+        while(this.app.stage.children[0]) {
+          this.app.stage.removeChild(this.app.stage.children[0])
+        }
+      }
+
+    },
   }
 }
 
