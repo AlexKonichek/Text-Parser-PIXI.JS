@@ -17,6 +17,7 @@ export default {
   name: 'Renderer',
   data() {
     return {
+      firstSymbolIndex:5,
       canvasWidths:500,
       spritesheetWrapper:null,
       spriteSheetBorder:null,
@@ -35,19 +36,53 @@ export default {
       showRenderButton:true
     }
   },
-  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer"],
+  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbos", "finalSmallXAdvance","comaParams", "dotIndex","symbolWidth"],
   computed: {
+   smallSymbolsXoffset() {
+     return (this.finalSmallXAdvance - this.comaParams.width)/2
+   },
+
     shiftX(){
       return this.xoffset
+    },
+    shiftXSmall() {
+      return this.xoffsetSmall
+    },
+    itemWidth() {
+      return this.symbolWidth
+    },
+    comaTextureIndex() {
+      let comaIndex;
+      this.textures.forEach((texture, index)=> {
+        if((texture.frame.x === this.comaParams.x) && ( texture.frame.y === this.comaParams.y)) {
+          console.log(texture, index)
+          comaIndex = index
+        }
+      })
+      return comaIndex
     }
   },
   watch:{
-    shiftX: function () {
+    smallSymbolsXoffset: function () {
       if(this.app.stage) {
         this.clearStage()
-        this.render()
+        this.render(true)
+      }
+    },
+    shiftX: function () {
+
+      if(this.app.stage) {
+        this.clearStage()
+        this.render(false)
       }
 
+    },
+    shiftXSmall: function () {
+      // console.log("shiftXSmall")
+      // if(this.app.stage) {
+      //   this.clearStage()
+      //   this.render()
+      // }
     },
     showRenderer: function () {
 
@@ -79,7 +114,7 @@ export default {
         view: canvas,
       })
       this.app.renderer.backgroundColor = 0x061639
-      this.parse()
+      this.parse(1,2)
 
     },
 
@@ -99,17 +134,26 @@ export default {
            //console.warn(index, texture.orig.width, texture.orig.height)
 
           } )
-          this.render()
+          this.render(false)
         });
       })
     },
-    render() {
+    render(jsonHasSmallSymbos) {
       console.log("render")
       this.showRenderButton = false
       this.addCanvasBorder();
-      //console.warn(symbolSprite.width,symbolSprite.height)
-      this.addSymbol(0,0,5, true)
-      this.addSymbol(146+this.shiftX,0,7, true)
+      if(jsonHasSmallSymbos) {
+        this.addSymbol(0,0,this.firstSymbolIndex, true)
+        this.addSymbol(this.itemWidth+this.smallSymbolsXoffset,0,this.comaTextureIndex, true)
+      }else{
+        this.addSymbol(0,0,this.firstSymbolIndex, true)
+        this.addSymbol(this.itemWidth+this.shiftX,0,5, true)
+      }
+
+
+
+
+
 
         //letter spasing mode
       //  if(this.letterSpasing) {
@@ -188,7 +232,6 @@ export default {
       let symbolSprite = PIXI.Sprite.from(texture);
 
       if(border) {
-        console.warn(symbolSprite.width,symbolSprite.height)
         let spriteBorder = new PIXI.Graphics();
         spriteBorder.lineStyle(1,0xDE3249, 1);
         spriteBorder.drawRect(2, 2, symbolSprite.width-2, symbolSprite.height-2);
@@ -204,7 +247,6 @@ export default {
     },
     clearStage() {
       console.log("clearStage")
-      console.log(this.app)
 
       if(this.app && this.app.stage.children.length>0){
         while(this.app.stage.children[0]) {

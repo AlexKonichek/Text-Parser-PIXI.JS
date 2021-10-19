@@ -53,7 +53,7 @@
                   type="number"
               >
             </div>
-                        <div v-if="showXadvanceForSmallSymbols">
+                        <div v-if="jsonHasSmallSymbos">
                           <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
                           <div class="input-group input-group-lg m-3">
                             <input
@@ -132,6 +132,11 @@
               :loadedPNG="loadedPNG"
               :showRenderer="showRenderer"
               :xoffset="xoffset"
+              :finalSmallXAdvance="finalSmallXAdvance"
+              :jsonHasSmallSymbos="jsonHasSmallSymbos"
+              :comaParams="comaParams"
+              :dotIndex="dotIndex"
+              :symbolWidth="xadvance"
           />
           <XML_Creator v-if="isDataReady"
                        @xOffsetChange="xoffset = $event"
@@ -162,6 +167,7 @@ export default {
   components: {Renderer, OpenFile, XML_Creator},
   data() {
     return {
+      arrSmallSumbolIndexesForRenderer:[],
       maxSymbolHeight:null,
       frameNamesArr: [],
       isDataReady:false,
@@ -192,7 +198,7 @@ export default {
       showForm:true,
       showModal:false,
       showCreateXMLButton:false,
-      showXadvanceForSmallSymbols:true,
+      showXadvanceForSmallSymbols:false,
       showImagePreview:false,
       showOpenFile:true,
       showSidePanel:false,
@@ -218,6 +224,7 @@ export default {
       maxSmallSymbolWidth: undefined,
       maxWidthReady: false,
       framesArr:[],
+      jsonHasSmallSymbos:false,
       JSONFile: {},
       loadedJSON: '',
       loadedPNG: {},
@@ -226,7 +233,9 @@ export default {
       xoffset: 0,
       yoffset: 0,
       yadvance: 0,
-      imgUrl:null
+      imgUrl:null,
+      comaParams: {},
+      dotIndex:0
     }
   },
   watch: {
@@ -356,10 +365,16 @@ export default {
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbos = true
+                    this.dotIndex = index
             break;
           case ",": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbos = true
+                    this.comaParams = {width:frame.sourceSize.w, height:frame.sourceSize.h, x:frame.frame.x, y:frame.frame.y}
+
             break;
           case "×": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbos = true
             break;
 
           default:this.arrSymbolsWidths.push(frame.sourceSize.w);
