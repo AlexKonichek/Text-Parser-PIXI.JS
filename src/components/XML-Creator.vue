@@ -5,8 +5,12 @@
         <div v-if="!showTextArea" class="form-group">
           <label class="h4 text-dark" for="JSON">JSON</label>
           <textarea class="form-control" id="JSON" v-model="JSONtext" rows="20" cols="50"></textarea>
-
         </div>
+        <Preview
+            v-if="allowToCreateXML"
+            :arrSymbolsParams="arrSymbolsParams"
+            :textures="textures"
+        />
       </div>
       <div  class="col-sm-6">
         <div class="form-group">
@@ -20,8 +24,11 @@
 </template>
 
 <script>
+import Preview from "./Preview";
+
 export default {
   name: "XML_Creator",
+  components: {Preview},
   data() {
     return {
       xadvanceCurrent: null,
@@ -40,17 +47,18 @@ export default {
       symbols: this.inputSymbols,
       showTextArea:false,
       xOffset:null,
-      yOffset:null
+      yOffset:null,
+      arrSymbolsParams:[]
     }
   },
-  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth"],
+  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth", "textures"],
   watch: {
     xOffset: function () {
       console.log("xOffset:",this.xOffset)
       this.$emit("xOffsetChange",this.xOffset)
     },
     allowToCreateXML: function () {
-      if(this.allowToCreateXML) {
+      if(this.allowToCreateXML===true) {
         this.fillCharcodeArr()
         this.prepareDataForXML();
       }
@@ -148,11 +156,11 @@ export default {
        //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
+        console.log(this.symbolsArr[index], frame.x, frame.y)
 
          //define xadvance for dot,comma or similar small symbol
         //to do add arr of all possibly small symbols and checking if it have a current symbols
         if((this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×")) {
-             console.log(sourceSize.w, this.symbolWidth)
             //this.xadvanceCurrent = this.smallSymbolsXadvance
             this.yadvance =  sourceSize.h
             this.xadvanceCurrent = this.finalSmallXAdvance
@@ -171,6 +179,14 @@ export default {
 
         let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
           this.XMLText += row
+          let symbolsParams = {
+              symbol:this.symbolsArr[index],
+              xoffset:this.xOffset,
+              width:frame.w,
+              x:frame.x,
+              y:frame.y
+          }
+          this.arrSymbolsParams.push(symbolsParams)
         });
 
       //end part of XML file

@@ -2,7 +2,7 @@
   <main class="bg-secondary">
     <div class="w-100 0">
       <div class="row">
-        <div class="col-sm-4 mr-2">
+        <div class="col-sm-3 mr-2">
           <div v-if="showSidePanel" class="m-3">
             <div>
               <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
@@ -69,6 +69,7 @@
             </div>
             <Renderer
                 v-if="showRenderer"
+                @textures="passTexture"
                 :canvasHeight="maxSymbolHeightModel"
                 :loadedJSON="loadedJSON"
                 :loadedPNG="loadedPNG"
@@ -86,21 +87,21 @@
 
           </div>
         </div>
-        <div class="col-sm-8 bg-light ml-3">
+        <div class="col-sm-9 bg-light ml-3">
+
           <OpenFile v-if="showOpenFile"
                     @json="loadedJSON = $event"
                     @image="loadedPNG = $event"
                     @getImgUrl="imgUrl = $event"
           ></OpenFile>
-          <div id="preview">
+          <div id="previewImage">
           <img v-if="showImagePreview" :src="imgUrl" width="500"  />
         </div>
+
           <div v-if="showFrameNamesOrderMessage" class="">
             <h2>Please, put symbols in right order or select it from selector under symbols form</h2>
-
           </div>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
-
           <XML_Creator v-if="isDataReady"
                        @xOffsetChange="xoffset = $event"
                        :finalSmallXAdvance="finalSmallXAdvance"
@@ -112,6 +113,7 @@
                        :arrSymbolsWidths="arrSymbolsWidths"
                        :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
                        :symbolWidth="xadvance"
+                       :textures="textures"
           />
 
 
@@ -137,7 +139,7 @@ export default {
         x:0,
         y:0
       },
-
+      textures:[],
       maxSymbolHeight:null,
       frameNamesArr: [],
       isDataReady:false,
@@ -283,6 +285,9 @@ export default {
 
   },
   methods: {
+    passTexture(e){
+      this.textures = e
+    },
     createShowFrameNameOrderList() {
       let data = JSON.parse(this.loadedJSON)
       let frames = Object.values(data)[0]

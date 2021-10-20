@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       firstSymbolIndex:5,
-      canvasWidths:500,
+      canvasWidths:400,
       spritesheetWrapper:null,
       spriteSheetBorder:null,
       app:{},
@@ -136,7 +136,8 @@ export default {
          this.textures.forEach((texture, index) => {
            //console.warn(index, texture.orig.width, texture.orig.height)
 
-          } )
+          })
+          this.$emit("textures", this.textures)
           this.render(false)
         });
       })
@@ -241,14 +242,7 @@ export default {
       let spriteContainer = new PIXI.Container()
       let symbolSprite = PIXI.Sprite.from(texture);
 
-      if(border) {
-        let spriteBorder = new PIXI.Graphics();
-        spriteBorder.lineStyle(1,0xDE3249, 1);
-        spriteBorder.drawRect(2, 2, symbolSprite.width-2, symbolSprite.height-2);
-        spriteBorder.endFill();
 
-        spriteContainer.addChild(spriteBorder)
-      }
       spriteContainer.x = x
       spriteContainer.y = y
       spriteContainer.addChild(symbolSprite)
