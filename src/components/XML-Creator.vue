@@ -143,6 +143,7 @@ export default {
     },
 
     JSON2XML() {
+      this.arrSymbolsParams = []
      // console.warn("JSON2XML");
       //first part of XML file
       this.XMLText = `
@@ -179,6 +180,7 @@ export default {
 
         let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
           this.XMLText += row
+
           let symbolsParams = {
               symbol:this.symbolsArr[index],
               xoffset:this.xOffset,
