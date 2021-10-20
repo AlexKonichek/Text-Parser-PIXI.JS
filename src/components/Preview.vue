@@ -10,7 +10,7 @@
           id="symbols"
           class="form-control mr-3"
           v-model="inputSymbols"
-          v-on:input="RequiredSymbolsHandler"
+          v-on:change="onInputHandler"
           required
           placeholder="USD"
       >
@@ -47,43 +47,47 @@ export default {
       let canvas = document.getElementById('pixiPreview')
       this.app = new PIXI.Application({
         width: this.canvasWidths,
-        height: this.canvasHeight,
+        height: this.textures[0].frame.height+10,
         antialias: true,
         transparent: true,
         view: canvas,
       })
       this.app.renderer.backgroundColor = 0xffffff
       this.addCanvasBorder()
-      //this.parse()
 
     },
-    RequiredSymbolsHandler(e){
+    onInputHandler(e){
       this.inputSymbols = e.target.value
       //let symbols = e.target.value
       this.symbolsArr = this.inputSymbols.split("");
-      let lastItem = this.symbolsArr[this.symbolsArr.length - 1].toUpperCase()
-      console.log(lastItem)
-      this.prepareToRender(lastItem)
+      //let lastItem = this.symbolsArr[this.symbolsArr.length - 1].toUpperCase()
+      console.log("onInputHandler",this.symbolsArr)
+
+      this.symbolsArr.forEach(symbol => this.prepareToRender(symbol.toUpperCase()))
     },
     prepareToRender(lastItem){
+      console.warn("prepareToRender")
       this.arrSymbolsParams.forEach(symbol => {
-        if(symbol.symbol===lastItem){
+        if(symbol.symbol === lastItem){
           this.itemsArr.push(symbol)
-
         }
+        else return
       })
-      console.log(this.itemsArr)
-      this.render()
+      if(this.itemsArr.length === this.symbolsArr.length ) {
+        console.log(this.itemsArr.length, this.symbolsArr.length)
+        this.render()
+      }
+
+      //this.render()
     },
     render(){
+      console.warn("render")
       this.itemsArr.forEach(item => {
-        console.log("render")
-        this.addSymbol(item.x, item.y,0, false)
+        this.addSymbol(item.x, item.y, item.xoffset,0, false)
       })
     },
-    addSymbol(x, y, index, border) {
+    addSymbol(x, y, xoffset, index, border) {
       let texture = this.textures[this.getTextureIndex(x, y)]
-      console.log(this.currentX)
       let spriteContainer = new PIXI.Container()
       let symbolSprite = PIXI.Sprite.from(texture);
 
@@ -95,7 +99,7 @@ export default {
 
         spriteContainer.addChild(spriteBorder)
       }
-      spriteContainer.x = this.currentX
+      spriteContainer.x = this.currentX + xoffset
       spriteContainer.y = 0
       spriteContainer.addChild(symbolSprite)
       this.spritesheetWrapper.addChild(spriteContainer)
