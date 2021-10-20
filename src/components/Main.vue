@@ -2,11 +2,11 @@
   <main class="bg-secondary">
     <div class="w-100 0">
       <div class="row">
-        <div class="col-sm-3 mr-2">
+        <div class="col-sm-4 mr-2">
           <div v-if="showSidePanel" class="m-3">
             <div>
               <label class="text-white h4 mt-2"  for="symbols">Required symbols</label>
-              <div class="input-group input-group-lg m-3">
+              <div class="input-group input-group-lg mb-2">
                 <input
                     type="text"
                     id="symbols"
@@ -26,7 +26,7 @@
             </div>
            <div v-if="showForm">
              <label  class="label text-white h4" for="Select">Choose symbols set</label>
-             <select  ref="select" class="form-control form-control-lg m-3" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
+             <select  ref="select" class="form-control form-control-lg mb-2" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
                <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
                <option>{{ this.selectOption2 }}</option>
              </select>
@@ -43,7 +43,7 @@
 <!--              >-->
 <!--            </div>-->
             <label class="text-white h4" for="XAdvance">general xadvance</label>
-            <div class="input-group input-group-lg m-3">
+            <div class="input-group input-group-lg mb-2">
               <input
                   id="XAdvance"
                   class="form-control mr-3"
@@ -53,65 +53,40 @@
                   type="number"
               >
             </div>
-                        <div v-if="jsonHasSmallSymbos">
-                          <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
-                          <div class="input-group input-group-lg m-3">
-                            <input
-                                id="XAdvanceSmall"
-                                class="form-control mr-3"
-                                ref="XAdvance"
-                                v-model="maxSmallSymbolWidthModel"
-                                step="1"
-                                min="1"
-                                type="number"
-                            >
-                          </div>
-                        </div>
-
-            <div v-if="checkedLetterSpasing">
-              <label class="text-white h4" for="ChangeXAdvance">Change letter spacing</label>
-              <div class="input-group input-group-lg m-3">
+            <div v-if="jsonHasSmallSymbos">
+              <label class="text-white h4" for="XAdvanceSmall">xadvance for "." "," and "×"</label>
+              <div class="input-group input-group-lg mb-2">
                 <input
-                    id="ChangeXAdvance"
+                    id="XAdvanceSmall"
                     class="form-control mr-3"
-                    v-model="changeXAdvance"
+                    ref="XAdvance"
+                    v-model="maxSmallSymbolWidthModel"
                     step="1"
-                    min="-100"
-                    max="+100"
+                    min="1"
                     type="number"
                 >
               </div>
             </div>
-            <div v-if="checkedLetterSpasing">
-              <label class="text-white h4" for="ChangeYAdvance">Change y position</label>
-              <div class="input-group input-group-lg m-3">
-                <input
-                    id="ChangeYAdvance"
-                    class="form-control mr-3"
-                    v-model="changeYAdvance"
-                    step="1"
-                    min="-100"
-                    max="+100"
-                    type="number"
-                >
-              </div>
-            </div>
-            <div v-if="showLetterSpacingModeCheckbox" class="form-check form-switch m-3">
-              <input class="form-check-input " v-model="checkedLetterSpasing" type="checkbox" id="ShowLetterSpasingMode">
-              <label class="form-check-label text-white" for="ShowLetterSpasingMode">letter spacing mode</label>
-            </div>
-            <div v-if="showBorderCheckbox" class="form-check form-switch m-3">
-              <input class="form-check-input" type="checkbox" v-model="checkedSpriteBorder"  id="ShowBorderCheck">
-              <label class="form-check-label text-white" for="ShowBorderCheck">
-                Show sprite border
-              </label>
-            </div>
+            <Renderer
+                v-if="showRenderer"
+                :canvasHeight="maxSymbolHeightModel"
+                :loadedJSON="loadedJSON"
+                :loadedPNG="loadedPNG"
+                :showRenderer="showRenderer"
+                :xoffset="xoffset"
+                :finalSmallXAdvance="finalSmallXAdvance"
+                :jsonHasSmallSymbos="jsonHasSmallSymbos"
+                :comaSymbolParams="comaParams"
+                :dotIndex="dotIndex"
+                :symbolWidth="xadvance"
+                :secondSymbolParams="secondSymbolParams"
+            />
 
             <button ref='refresh' class="btn btn-light m-3"  v-on:click="refreshPage">Clear</button>
 
           </div>
         </div>
-        <div class="col-sm-9 bg-light ml-3">
+        <div class="col-sm-8 bg-light ml-3">
           <OpenFile v-if="showOpenFile"
                     @json="loadedJSON = $event"
                     @image="loadedPNG = $event"
@@ -125,19 +100,7 @@
 
           </div>
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create</button>
-          <Renderer
-              v-if="showRenderer"
-              :canvasHeight="maxSymbolHeightModel"
-              :loadedJSON="loadedJSON"
-              :loadedPNG="loadedPNG"
-              :showRenderer="showRenderer"
-              :xoffset="xoffset"
-              :finalSmallXAdvance="finalSmallXAdvance"
-              :jsonHasSmallSymbos="jsonHasSmallSymbos"
-              :comaParams="comaParams"
-              :dotIndex="dotIndex"
-              :symbolWidth="xadvance"
-          />
+
           <XML_Creator v-if="isDataReady"
                        @xOffsetChange="xoffset = $event"
                        :finalSmallXAdvance="finalSmallXAdvance"
@@ -148,12 +111,12 @@
                        :smallSymbolsXadvance="maxSmallSymbolWidth"
                        :arrSymbolsWidths="arrSymbolsWidths"
                        :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
+                       :symbolWidth="xadvance"
           />
 
 
         </div>
       </div>
-      <div class="row"></div>
     </div>
   </main>
 </template>
@@ -168,6 +131,13 @@ export default {
   data() {
     return {
       arrSmallSumbolIndexesForRenderer:[],
+      secondSymbolParams:{
+        symbol:"S",
+        width:0,
+        x:0,
+        y:0
+      },
+
       maxSymbolHeight:null,
       frameNamesArr: [],
       isDataReady:false,
@@ -362,6 +332,12 @@ export default {
       console.warn("preparseJSON");
       this.arrSmallSymbolsWidth = []
       this.arrSymbolsWidths = []
+      if(this.symbolsArr.includes("S")) {
+        this.secondSymbolParams.symbol = 'S'
+      }
+      else {
+        this.secondSymbolParams.symbol = "0"
+      }
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
@@ -375,6 +351,10 @@ export default {
             break;
           case "×": this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
                     this.jsonHasSmallSymbos = true
+            break;
+          case this.secondSymbolParams.symbol: this.secondSymbolParams.width = frame.sourceSize.w
+                    this.secondSymbolParams.x = frame.frame.x
+                    this.secondSymbolParams.y = frame.frame.y
             break;
 
           default:this.arrSymbolsWidths.push(frame.sourceSize.w);

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="showTextArea" class="row h-25 m-3">
+    <div class="row m-3">
       <div class="col-sm-6">
-        <div class="form-group">
+        <div v-if="!showTextArea" class="form-group">
           <label class="h4 text-dark" for="JSON">JSON</label>
           <textarea class="form-control" id="JSON" v-model="JSONtext" rows="20" cols="50"></textarea>
 
@@ -11,7 +11,7 @@
       <div  class="col-sm-6">
         <div class="form-group">
           <label class="h4 text-dark" for="XML">XML</label>
-          <textarea class="form-control" id="XML" v-model="XMLText" rows="20" cols="50"></textarea>
+          <textarea class="form-control" id="XML" v-model="XMLText" rows="28" cols="50"></textarea>
           <button class="btn btn-success btn-lg m-3"  v-on:click="this.downloadXML">Save XML</button>
         </div>
       </div>
@@ -43,7 +43,7 @@ export default {
       yOffset:null
     }
   },
-  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance"],
+  props: ["JSONtext", "symbolsArr", "allowToCreateXML", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth"],
   watch: {
     xOffset: function () {
       console.log("xOffset:",this.xOffset)
@@ -151,8 +151,8 @@ export default {
 
          //define xadvance for dot,comma or similar small symbol
         //to do add arr of all possibly small symbols and checking if it have a current symbols
-        if(this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×") {
-             console.log(this.symbolsArr[index],)
+        if((this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×")) {
+             console.log(sourceSize.w, this.symbolWidth)
             //this.xadvanceCurrent = this.smallSymbolsXadvance
             this.yadvance =  sourceSize.h
             this.xadvanceCurrent = this.finalSmallXAdvance

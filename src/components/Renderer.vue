@@ -1,6 +1,6 @@
 <template>
   <div class="w-100">
-    <button  v-if="showRenderButton" class="btn btn-success btn-lg m-3"  v-on:click="drawPixi">Render</button>
+    <button  v-if="showRenderButton" class="btn btn-success btn-lg mt-3"  v-on:click="drawPixi">Preview</button>
     <div class="col-sm-6">
       <canvas id="pixi"></canvas>
     </div>
@@ -36,10 +36,10 @@ export default {
       showRenderButton:true
     }
   },
-  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbos", "finalSmallXAdvance","comaParams", "dotIndex","symbolWidth"],
+  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbols", "finalSmallXAdvance","comaSymbolParams", "dotIndex","symbolWidth","secondSymbolParams"],
   computed: {
    smallSymbolsXoffset() {
-     return (this.finalSmallXAdvance - this.comaParams.width)/2
+     return (this.finalSmallXAdvance - this.comaSymbolParams.width)/2
    },
 
     shiftX(){
@@ -51,26 +51,45 @@ export default {
     itemWidth() {
       return this.symbolWidth
     },
-    comaTextureIndex() {
-      let comaIndex;
+    comaSymbol() {
+      let params = {
+        width:0,x:0,y:0,index:0
+      };
       this.textures.forEach((texture, index)=> {
-        if((texture.frame.x === this.comaParams.x) && ( texture.frame.y === this.comaParams.y)) {
-          console.log(texture, index)
-          comaIndex = index
+        if((texture.frame.x === this.comaSymbolParams.x) && ( texture.frame.y === this.comaSymbolParams.y)) {
+          params.width = texture.orig.width;
+          params.x = texture.frame.x;
+          params.y = texture.frame.y
+          params.index = index
         }
       })
-      return comaIndex
-    }
+      return params
+    },
+    secondSymbol() {
+      let params = {
+        width:0,x:0,y:0,index:0
+      };
+      this.textures.forEach((texture, index)=> {
+        if((texture.frame.x === this.secondSymbolParams.x) && ( texture.frame.y === this.secondSymbolParams.y)) {
+          params.index = index
+          params.x = texture.frame.x
+          params.y = texture.frame.y
+          params.width = texture.orig.width
+        }
+      })
+      return params
+    },
   },
   watch:{
     smallSymbolsXoffset: function () {
+      console.log(this.smallSymbolsXoffset)
       if(this.app.stage) {
         this.clearStage()
         this.render(true)
       }
     },
-    shiftX: function () {
 
+    shiftX: function () {
       if(this.app.stage) {
         this.clearStage()
         this.render(false)
@@ -84,23 +103,7 @@ export default {
       //   this.render()
       // }
     },
-    showRenderer: function () {
 
-    },
-    showBorderCheckbox: function () {
-      this.renderSymbols()
-    },
-    changeXAdvance: function () {
-      this.renderSymbols()
-    },
-    changeYAdvance: function () {
-      console.log('change y advance', this.changeYAdvance)
-      this.renderSymbols()
-    },
-
-    letterSpasing: function () {
-      this.renderSymbols()
-    },
   },
   methods: {
     drawPixi() {
@@ -113,8 +116,8 @@ export default {
         transparent: true,
         view: canvas,
       })
-      this.app.renderer.backgroundColor = 0x061639
-      this.parse(1,2)
+      this.app.renderer.backgroundColor = 0xffffff
+      this.parse()
 
     },
 
@@ -138,21 +141,24 @@ export default {
         });
       })
     },
-    render(jsonHasSmallSymbos) {
-      console.log("render")
+    render(jsonHasSmallSymbols) {
+      console.warn("render")
       this.showRenderButton = false
       this.addCanvasBorder();
-      if(jsonHasSmallSymbos) {
-        this.addSymbol(0,0,this.firstSymbolIndex, true)
-        this.addSymbol(this.itemWidth+this.smallSymbolsXoffset,0,this.comaTextureIndex, true)
+      let firstSymbol = this.secondSymbol;
+      let secondSymbol,xoffset
+      this.addSymbol(0,0,firstSymbol.index, false)
+      if(jsonHasSmallSymbols) {
+        console.log("jsonHasSmallSymbols yes",secondSymbol)
+        this.addSymbol(firstSymbol.width + this.smallSymbolsXoffset, 0, this.comaSymbol.index, false)
       }else{
-        this.addSymbol(0,0,this.firstSymbolIndex, true)
-        this.addSymbol(this.itemWidth+this.shiftX,0,5, true)
+        this.addSymbol(firstSymbol.width + this.shiftX, 0, this.secondSymbol.index, false)
+        console.log("jsonHasSmallSymbols not",secondSymbol)
       }
 
 
-
-
+      //this.addSymbol(0,0,this.secondSymbol.index, false)
+      //this.addSymbol(this.secondSymbol.width+this.smallSymbolsXoffset,0,this.comaTextureIndex, false)
 
 
         //letter spasing mode
@@ -215,6 +221,10 @@ export default {
 
 
     },
+    prepareForPreview() {
+      let indexSecondSymbol = 5
+      this.secondSymbolsParams={}
+    },
     addCanvasBorder() {
       this.spritesheetWrapper = new PIXI.Container()
       this.spriteSheetBorder = new PIXI.Graphics();
@@ -236,15 +246,17 @@ export default {
         spriteBorder.lineStyle(1,0xDE3249, 1);
         spriteBorder.drawRect(2, 2, symbolSprite.width-2, symbolSprite.height-2);
         spriteBorder.endFill();
-        spriteContainer.x = x
-        spriteContainer.y = y
+
         spriteContainer.addChild(spriteBorder)
       }
+      spriteContainer.x = x
+      spriteContainer.y = y
       spriteContainer.addChild(symbolSprite)
       this.spritesheetWrapper.addChild(spriteContainer)
 
 
     },
+
     clearStage() {
       console.log("clearStage")
 

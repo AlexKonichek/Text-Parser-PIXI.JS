@@ -17,7 +17,7 @@ export default {
 
 <style>
 #app {
- 
+ min-height: 100%;
  
 }
 </style>
