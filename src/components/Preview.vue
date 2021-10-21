@@ -50,10 +50,15 @@ export default {
     inputSymbols: function () {
       this.symbolsArr = []
       this.symbolsArr = this.inputSymbols.split("");
-      this.symbolsArr = this.symbolsArr.map(symbol => symbol.toUpperCase())
+      this.symbolsArr = this.symbolsArr.map(symbol => {
+        if(typeof(symbol)==="string"){
+          console.log(typeof(symbol)==="string")
+          symbol.toUpperCase();
+        }
+        //this.validateSymbolsForm(symbol)
+        })
       console.log("inputSymbols is changed", this.symbolsArr)
-      //this.validateSymbolsForm()
-      this.startPrerendering()
+      //this.startPrerendering()
     },
   },
   computed: {
@@ -75,8 +80,8 @@ export default {
     },
 
     onInputHandler(e){
-      this.inputSymbols = e.target.value
-      this.symbolsArr = this.inputSymbols.split("");
+      //this.inputSymbols = e.target.value
+      //this.symbolsArr = this.inputSymbols.split("");
     },
 
     startPrerendering() {
@@ -167,6 +172,15 @@ export default {
       }
 
     },
+    validateSymbolsForm(symbol) {
+     this.arrSymbolsParams.forEach(item => {
+       if(symbol!==item.symbol){
+         console.warn("wrong symbols")
+         this.inputSymbols = ""
+         this.symbolsArr = []
+       }
+     })
+    }
 
   }
 }
