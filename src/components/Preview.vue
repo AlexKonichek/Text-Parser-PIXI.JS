@@ -10,7 +10,6 @@
           id="symbols"
           class="form-control mr-3"
           v-model="inputSymbols"
-          v-on:change="onInputHandler"
           required
           placeholder="USD"
       >
@@ -38,7 +37,9 @@ export default {
       itemsArr:[],
       spritesheetWrapper:null,
       currentX:0,
-      arrCorrectSymbols: []
+      arrCorrectSymbols: [],
+      symbolsArrUpper:[],
+      startCoordinateForNextSymbol:0,
 
     }
   },
@@ -49,16 +50,18 @@ export default {
     },
     inputSymbols: function () {
       this.symbolsArr = []
-      this.symbolsArr = this.inputSymbols.split("");
-      this.symbolsArr = this.symbolsArr.map(symbol => {
-        if(typeof(symbol)==="string"){
-          console.log(typeof(symbol)==="string")
-          symbol.toUpperCase();
-        }
-        //this.validateSymbolsForm(symbol)
+      this.symbolsArr = this.inputSymbols.split("").map(symbol => symbol.toUpperCase());
+      this.symbolsArr.forEach(symbol => {
+                this.validateSymbolsForm(symbol)
         })
-      console.log("inputSymbols is changed", this.symbolsArr)
-      //this.startPrerendering()
+      console.warn("inputSymbols is changed", this.symbolsArr)
+      if(this.symbolsArr.length>0) {
+        this.symbolsArr.forEach(symbol => {
+          let currentSymbol = this.arrSymbolsParams.filter(item => item.symbol === symbol)[0]
+          console.log(currentSymbol)
+          this.addSymbol(currentSymbol.width, currentSymbol.xoffset, currentSymbol.x, currentSymbol.y,)
+        })
+      }
     },
   },
   computed: {
@@ -78,38 +81,13 @@ export default {
       this.app.renderer.backgroundColor = 0xffffff
       this.addCanvasBorder()
     },
-
-    onInputHandler(e){
-      //this.inputSymbols = e.target.value
-      //this.symbolsArr = this.inputSymbols.split("");
-    },
-
-    startPrerendering() {
-      console.warn("startPrerendering",this.symbolsArr)
-      if( this.symbolsArr.length > 0 ){
-        this.symbolsArr.forEach(symbol => this.prepareSymbolsArray(symbol.toUpperCase()))
-      }
-    },
-
-    prepareSymbolsArray(currentSymbol){
+    prepareSymbolsArray (currentSymbol){
       console.warn("prepareSymbolsArray")
-      this.arrSymbolsParams.forEach(symbol => {
-        if(symbol.symbol === currentSymbol){
-          this.itemsArr.push(symbol)
-        }
-        else return
-      })
-      console.log(this.itemsArr,this.symbolsArr )
-      if(this.itemsArr.length === this.symbolsArr.length ) {
 
-        this.correctSymbolsCoordinates()
-      }
-      else {
-        //throw Error("itemsArr.length not equal to symbolsArr.length ")
-      }
+
     },
+
     correctSymbolsCoordinates(){
-      debugger
       let currentX = 0
       let allXoffset = 0
       this.itemsArr.forEach((sybmol, index) => {
@@ -125,7 +103,7 @@ export default {
         this.render()
       }
       else{
-        throw new Error("arrCorrectSymbols is empty")
+       return
       }
     },
 
@@ -133,18 +111,20 @@ export default {
       console.warn("render")
       this.clearStage()
       this.arrCorrectSymbols.forEach((item,i) => {
-        this.addSymbol(item.xActual,item.x, item.y, false)
+        this.addSymbol(item.width, item.xoffset, item.x, item.y)
       })
     },
-    addSymbol(xActual, x, y, border) {
+    addSymbol(width, xoffset, x, y) {
+      debugger
       console.warn("addSymbol")
       let texture = this.textures[this.getTextureIndex(x, y)]
       let spriteContainer = new PIXI.Container()
       let symbolSprite = PIXI.Sprite.from(texture);
-      spriteContainer.x = xActual
+      spriteContainer.x = this.currentX
       spriteContainer.y = 0
       spriteContainer.addChild(symbolSprite)
       this.spritesheetWrapper.addChild(spriteContainer)
+      this.currentX = width + xoffset
     },
     getTextureIndex(x,y) {
       let index = this.textures.findIndex(texture => texture.frame.x === x && texture.frame.y === y );
@@ -173,13 +153,12 @@ export default {
 
     },
     validateSymbolsForm(symbol) {
-     this.arrSymbolsParams.forEach(item => {
-       if(symbol!==item.symbol){
-         console.warn("wrong symbols")
-         this.inputSymbols = ""
-         this.symbolsArr = []
-       }
-     })
+      console.warn("validateSymbolsForm")
+      let arrSymbolsNames = this.arrSymbolsParams.map(item => item.symbol)
+      if(!arrSymbolsNames.includes(symbol)) {
+        this.inputSymbols = this.inputSymbols.substring(0, this.inputSymbols.length - 1);
+        this.symbolsArr.pop()
+      }
     }
 
   }

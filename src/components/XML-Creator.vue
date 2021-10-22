@@ -157,7 +157,6 @@ export default {
        //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
-        console.log(this.symbolsArr[index], frame.x, frame.y)
 
          //define xadvance for dot,comma or similar small symbol
         //to do add arr of all possibly small symbols and checking if it have a current symbols
