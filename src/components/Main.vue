@@ -61,7 +61,6 @@
                     ref="XAdvance"
                     v-model="maxSmallSymbolWidthModel"
                     step="1"
-                    min="1"
                     type="number"
                 >
               </div>
@@ -384,7 +383,8 @@ export default {
             break;
 
           default:this.arrSymbolsWidths.push(frame.sourceSize.w);
-                  this.arrSymbolsHeights.push(frame.sourceSize.h)
+                  this.arrSymbolsHeights.push(frame.frame.h)
+                  console.log( this.arrSymbolsHeights)
 
             break;
 

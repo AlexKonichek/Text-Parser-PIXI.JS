@@ -38,6 +38,7 @@ export default {
   },
   props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbols", "finalSmallXAdvance","comaSymbolParams", "dotIndex","symbolWidth","secondSymbolParams"],
   computed: {
+   
    smallSymbolsXoffset() {
      return (this.finalSmallXAdvance - this.comaSymbolParams.width)/2
    },
