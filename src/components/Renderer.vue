@@ -1,6 +1,6 @@
 <template>
   <div class="w-100">
-    <button  v-if="showRenderButton" class="btn btn-success btn-lg mt-3"  v-on:click="drawPixi">Preview</button>
+    <button  v-if="showRenderButton" class="btn btn-light btn-lg mt-3"  v-on:click="drawPixi">Correct XAdvance</button>
     <div class="col-sm-6">
       <canvas id="pixi"></canvas>
     </div>
@@ -41,10 +41,7 @@ export default {
    smallSymbolsXoffset() {
      return (this.finalSmallXAdvance - this.comaSymbolParams.width)/2
    },
-
-    shiftX(){
-      return this.xoffset
-    },
+    
     shiftXSmall() {
       return this.xoffsetSmall
     },
@@ -88,13 +85,12 @@ export default {
         this.render(true)
       }
     },
-
-    shiftX: function () {
+    xoffset: function () {
+      console.warn("xoffset change",this.xoffset)
       if(this.app.stage) {
         this.clearStage()
         this.render(false)
       }
-
     },
     shiftXSmall: function () {
       // console.log("shiftXSmall")
@@ -103,7 +99,6 @@ export default {
       //   this.render()
       // }
     },
-
   },
   methods: {
     drawPixi() {
@@ -118,9 +113,7 @@ export default {
       })
       this.app.renderer.backgroundColor = 0xffffff
       this.parse()
-
     },
-
     parse() {
       console.warn("parse")
       let atlas = JSON.parse(this.loadedJSON)
@@ -134,10 +127,9 @@ export default {
           this.textures = Object.values(args[0])
           //console.warn(this.textures)
          this.textures.forEach((texture, index) => {
-           //console.warn(index, texture.orig.width, texture.orig.height)
-
+           console.warn(texture)
           })
-          this.$emit("textures", this.textures)
+          this.$emit("texturesIsReady", this.textures)
           this.render(false)
         });
       })
@@ -147,80 +139,12 @@ export default {
       this.showRenderButton = false
       this.addCanvasBorder();
       let firstSymbol = this.secondSymbol;
-      let secondSymbol,xoffset
       this.addSymbol(0,0,firstSymbol.index, false)
       if(jsonHasSmallSymbols) {
-        console.log("jsonHasSmallSymbols yes",secondSymbol)
         this.addSymbol(firstSymbol.width + this.smallSymbolsXoffset, 0, this.comaSymbol.index, false)
       }else{
-        this.addSymbol(firstSymbol.width + this.shiftX, 0, this.secondSymbol.index, false)
-        console.log("jsonHasSmallSymbols not",secondSymbol)
+        this.addSymbol(firstSymbol.width + this.xoffset, 0, this.secondSymbol.index, false)
       }
-
-
-      //this.addSymbol(0,0,this.secondSymbol.index, false)
-      //this.addSymbol(this.secondSymbol.width+this.smallSymbolsXoffset,0,this.comaTextureIndex, false)
-
-
-        //letter spasing mode
-      //  if(this.letterSpasing) {
-      //     this.textures.forEach((texture,i) => {
-      //       if(i>1){ return }
-      //       else{
-      //         let container = new PIXI.Container()
-      //         let sprite = PIXI.Sprite.from(texture);
-      //         let spriteBorder = new PIXI.Graphics();
-      //         let line1 = new PIXI.Graphics();
-      //         line1.lineStyle(2, 0x000000)
-      //             .moveTo(-300, sprite.height)
-      //             .lineTo(this.canvasSize.w, sprite.height);
-      //         let line2 = new PIXI.Graphics();
-      //         line1.lineStyle(2, 0x000000)
-      //             .moveTo(-300, sprite.height*2)
-      //             .lineTo(this.canvasSize.w, sprite.height*2);
-      //
-      //         spriteBorder.lineStyle(2, 0xFF3300, 1);
-      //         spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
-      //         spriteBorder.endFill();
-      //         container.addChild(sprite)
-      //         container.position.x = 200+sprite.width*i+Number(this.changeXAdvance*(i+1))
-      //         container.position.y = sprite.height+Number(this.changeYAdvance)
-      //         this.app.stage.addChild(container)
-      //         if(this.showBorderCheckbox) {
-      //           container.addChild(spriteBorder)
-      //           this.app.stage.addChild(line1)
-      //           this.app.stage.addChild(line2)
-      //         }
-      //       }
-      //    })
-      //    }
-      //  //main render mode
-      // else{
-      //   this.textures.forEach((texture,i) => {
-      //    let sprite = PIXI.Sprite.from(texture);
-      //
-      //     let container = new PIXI.Container()
-      //     let spriteBorder = new PIXI.Graphics();
-      //     sprite.width = this.coordinatesArr[i].sourceSize.w
-      //     sprite.height = this.coordinatesArr[i].sourceSize.h
-      //     //sprite.width = this.frameW[0]
-      //     //sprite.height = this.frameH[0]
-      //     spriteBorder.lineStyle(2, 0xFF3300, 1);
-      //     spriteBorder.drawRect(0, 0, sprite.width, sprite.height);
-      //     spriteBorder.endFill();
-      //     spriteBorder.x = sprite.position.x;
-      //     spriteBorder.y = sprite.position.y;
-      //     container.addChild(sprite)
-      //     container.position.x = this.coordinatesArr[i].x * this.scale
-      //     container.position.y = this.coordinatesArr[i].y * this.scale
-      //     spritesheetWrapper.addChild(container)
-      //     if(this.showBorderCheckbox) {
-      //       container.addChild(spriteBorder)
-      //     }
-      //   })
-      // }
-
-
     },
     prepareForPreview() {
       let indexSecondSymbol = 5
@@ -241,28 +165,19 @@ export default {
       let texture = this.textures[index]
       let spriteContainer = new PIXI.Container()
       let symbolSprite = PIXI.Sprite.from(texture);
-
-
       spriteContainer.x = x
       spriteContainer.y = y
       spriteContainer.addChild(symbolSprite)
       this.spritesheetWrapper.addChild(spriteContainer)
-
-
     },
-
     clearStage() {
       console.log("clearStage")
-
       if(this.app && this.app.stage.children.length>0){
         while(this.app.stage.children[0]) {
           this.app.stage.removeChild(this.app.stage.children[0])
         }
       }
-
     },
   }
 }
-
-
 </script>

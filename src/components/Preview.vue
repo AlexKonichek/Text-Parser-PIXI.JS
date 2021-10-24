@@ -1,6 +1,5 @@
 <template>
 <div>
-  <button class="btn btn-success btn-lg m-3"  v-on:click="drawPixi">Finish preview</button>
   <canvas id="pixiPreview"></canvas>
   <div>
     <label class="text-white h4 mt-2"  for="symbols"></label>
@@ -16,6 +15,7 @@
     </div>
 
   </div>
+  <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStage">Clear</button>
 
 </div>
 </template>
@@ -40,33 +40,30 @@ export default {
       arrCorrectSymbols: [],
       symbolsArrUpper:[],
       startCoordinateForNextSymbol:0,
+      firstTime: true
 
     }
   },
-  props:["arrSymbolsParams", "textures"],
+  props:["arrSymbolsParams", "textures", "symbolsMap"],
   watch: {
     arrSymbolsParams: function () {
-      console.log(this.arrSymbolsParams[0].xoffset)
+       console.warn(this.arrSymbolsParams)
     },
     inputSymbols: function () {
       this.symbolsArr = []
+      this.clearStage()
       this.symbolsArr = this.inputSymbols.split("").map(symbol => symbol.toUpperCase());
-      this.symbolsArr.forEach(symbol => {
-                this.validateSymbolsForm(symbol)
-        })
+      let lastSymbol = this.symbolsArr[this.symbolsArr.length - 1]
+      this.validateSymbolsForm(lastSymbol)
+                this.addSymbol(lastSymbol)
       console.warn("inputSymbols is changed", this.symbolsArr)
-      if(this.symbolsArr.length>0) {
-        this.symbolsArr.forEach(symbol => {
-          let currentSymbol = this.arrSymbolsParams.filter(item => item.symbol === symbol)[0]
-          console.log(currentSymbol)
-          this.addSymbol(currentSymbol.width, currentSymbol.xoffset, currentSymbol.x, currentSymbol.y,)
-        })
-      }
+      
     },
   },
-  computed: {
-
+  mounted() {
+    this.drawPixi()
   },
+ 
   methods: {
     drawPixi() {
       console.warn("drawPixi")
@@ -81,6 +78,7 @@ export default {
       this.app.renderer.backgroundColor = 0xffffff
       this.addCanvasBorder()
     },
+
     prepareSymbolsArray (currentSymbol){
       console.warn("prepareSymbolsArray")
 
@@ -88,7 +86,7 @@ export default {
     },
 
     correctSymbolsCoordinates(){
-      let currentX = 0
+      /* let currentX = 0
       let allXoffset = 0
       this.itemsArr.forEach((sybmol, index) => {
         //xoffset = item.xoffset
@@ -103,33 +101,45 @@ export default {
         this.render()
       }
       else{
-       return
-      }
+       return */
+     // }
     },
 
     render(){
-      console.warn("render")
+     /*  console.warn("render")
       this.clearStage()
       this.arrCorrectSymbols.forEach((item,i) => {
         this.addSymbol(item.width, item.xoffset, item.x, item.y)
-      })
+      }) */
     },
-    addSymbol(width, xoffset, x, y) {
-      debugger
+    addSymbol(currentSymbol) {
       console.warn("addSymbol")
-      let texture = this.textures[this.getTextureIndex(x, y)]
-      let spriteContainer = new PIXI.Container()
-      let symbolSprite = PIXI.Sprite.from(texture);
-      spriteContainer.x = this.currentX
-      spriteContainer.y = 0
-      spriteContainer.addChild(symbolSprite)
-      this.spritesheetWrapper.addChild(spriteContainer)
-      this.currentX = width + xoffset
+        
+        
+        let params = this.symbolsMap.get(currentSymbol)
+        console.warn(params)
+        let spriteContainer = new PIXI.Container()
+        let symbolSprite = PIXI.Sprite.from(params.texture);
+        if(this.firstTime){
+          spriteContainer.x = this.currentX
+        }else{
+          spriteContainer.x = this.currentX + params.xoffset
+        }
+        spriteContainer.y = 0
+        spriteContainer.addChild(symbolSprite)
+        this.spritesheetWrapper.addChild(spriteContainer)
+        this.currentX = spriteContainer.x + params.width
+        this.firstTime = false
+        
+        
+
+      
+      
     },
-    getTextureIndex(x,y) {
+    /* getTextureIndex(x,y) {
       let index = this.textures.findIndex(texture => texture.frame.x === x && texture.frame.y === y );
       return index
-    },
+    }, */
     addCanvasBorder() {
        this.spritesheetWrapper = new PIXI.Container()
       let spriteSheetBorder = new PIXI.Graphics();
@@ -140,6 +150,9 @@ export default {
       spriteSheetBorder.y = 0;
       this.spritesheetWrapper.addChild(spriteSheetBorder)
       this.app.stage.addChild(this.spritesheetWrapper);
+    },
+    clear(){
+      console.warn("clearStage")
     },
 
     clearStage() {
@@ -154,8 +167,7 @@ export default {
     },
     validateSymbolsForm(symbol) {
       console.warn("validateSymbolsForm")
-      let arrSymbolsNames = this.arrSymbolsParams.map(item => item.symbol)
-      if(!arrSymbolsNames.includes(symbol)) {
+      if(!this.symbolsMap.has(symbol)) {
         this.inputSymbols = this.inputSymbols.substring(0, this.inputSymbols.length - 1);
         this.symbolsArr.pop()
       }
