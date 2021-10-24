@@ -15,7 +15,7 @@
     </div>
 
   </div>
-  <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStage">Clear</button>
+  <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStagePreview">Clear</button>
 
 </div>
 </template>
@@ -51,7 +51,7 @@ export default {
     },
     inputSymbols: function () {
       this.symbolsArr = []
-      this.clearStage()
+      //this.clearStagePreview()
       this.symbolsArr = this.inputSymbols.split("").map(symbol => symbol.toUpperCase());
       let lastSymbol = this.symbolsArr[this.symbolsArr.length - 1]
       this.validateSymbolsForm(lastSymbol)
@@ -114,8 +114,6 @@ export default {
     },
     addSymbol(currentSymbol) {
       console.warn("addSymbol")
-        
-        
         let params = this.symbolsMap.get(currentSymbol)
         console.warn(params)
         let spriteContainer = new PIXI.Container()
@@ -153,15 +151,23 @@ export default {
     },
     clear(){
       console.warn("clearStage")
+
     },
 
-    clearStage() {
-      console.warn("clearStage")
-
+    clearStagePreview() {
       if(this.app && this.app.stage.children.length>0){
-        while(this.app.stage.children[1]) {
-          this.app.stage.removeChild(this.app.stage.children[1])
-        }
+       console.warn("clearStage",this.app.stage)
+       this.app.stage.children.forEach((element, index) => {
+         if(index===1){
+           console.log(element)
+           return
+         }
+         else{
+           this.app.stage.removeChild(element)
+         }
+
+         
+       });
       }
 
     },
