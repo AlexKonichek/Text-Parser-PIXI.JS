@@ -94,12 +94,12 @@
                     @getImgUrl="imgUrl = $event"
           ></OpenFile>
 
-          <div id="previewImage">
-            <img v-if="showImagePreview" :src="imgUrl" width="500"  />
+          <div v-if="showFrameNamesOrderMessage">
+            <h2><b>Please, put symbols in right order or select it from selector under symbols form</b></h2>
           </div>
 
-          <div v-if="showFrameNamesOrderMessage">
-            <h2>Please, put symbols in right order or select it from selector under symbols form</h2>
+          <div id="previewImage">
+            <img v-if="showImagePreview" :src="imgUrl" width="500"  />
           </div>
 
           <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create XML</button>
