@@ -15,6 +15,8 @@
     </div>
 
   </div>
+
+  <button class="btn btn-success btn-lg m-3"  v-on:click="renderSymbols">Render</button>
   <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStagePreview">Clear</button>
 
 </div>
@@ -50,12 +52,20 @@ export default {
        console.warn(this.arrSymbolsParams)
     },
     inputSymbols: function () {
-      this.symbolsArr = []
+      console.warn("inputSymbols", this.symbolsArr)
+      if(this.inputSymbols.length===0){
+        return
+      }
+
+      let lastSymbol;
       //this.clearStagePreview()
-      this.symbolsArr = this.inputSymbols.split("").map(symbol => symbol.toUpperCase());
-      let lastSymbol = this.symbolsArr[this.symbolsArr.length - 1]
+     if(this.inputSymbols.length>0){
+       this.symbolsArr = this.inputSymbols.split("").map(symbol => symbol.toUpperCase());
+       lastSymbol = this.symbolsArr[this.symbolsArr.length - 1]
+     }
+
       this.validateSymbolsForm(lastSymbol)
-                this.addSymbol(lastSymbol)
+      //this.addSymbol(lastSymbol)
       console.warn("inputSymbols is changed", this.symbolsArr)
       
     },
@@ -76,13 +86,18 @@ export default {
         view: canvas,
       })
       this.app.renderer.backgroundColor = 0xffffff
-      this.addCanvasBorder()
+      //this.addCanvasBorder()
     },
 
     prepareSymbolsArray (currentSymbol){
       console.warn("prepareSymbolsArray")
 
 
+    },
+    renderSymbols(){
+      this.symbolsArr.forEach(symbol=> {
+        this.addSymbol(symbol)
+      })
     },
 
     correctSymbolsCoordinates(){
@@ -113,7 +128,8 @@ export default {
       }) */
     },
     addSymbol(currentSymbol) {
-      console.warn("addSymbol")
+      console.warn("addSymbol", currentSymbol)
+      if(currentSymbol){
         let params = this.symbolsMap.get(currentSymbol)
         console.warn(params)
         let spriteContainer = new PIXI.Container()
@@ -125,9 +141,11 @@ export default {
         }
         spriteContainer.y = 0
         spriteContainer.addChild(symbolSprite)
-        this.spritesheetWrapper.addChild(spriteContainer)
+        //this.spritesheetWrapper.addChild(spriteContainer)
+        this.app.stage.addChild(spriteContainer)
         this.currentX = spriteContainer.x + params.width
         this.firstTime = false
+      }
         
         
 
@@ -155,19 +173,12 @@ export default {
     },
 
     clearStagePreview() {
-      if(this.app && this.app.stage.children.length>0){
-       console.warn("clearStage",this.app.stage)
-       this.app.stage.children.forEach((element, index) => {
-         if(index===1){
-           console.log(element)
-           return
-         }
-         else{
-           this.app.stage.removeChild(element)
-         }
-
-         
-       });
+      console.warn("clearStagePreview")
+      while(this.app.stage.children[0]) {
+        this.app.stage.removeChild(this.app.stage.children[0]);
+        this.inputSymbols = []
+        this.symbolsArr = []
+        this.currentX = 0
       }
 
     },
