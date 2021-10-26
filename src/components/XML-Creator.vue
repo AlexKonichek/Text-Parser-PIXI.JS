@@ -197,6 +197,7 @@ export default {
                   name:this.symbolsArr[index],
                   xoffset:this.xOffset,
                   width:frame.w,
+                  height:frame.h,
                   x:frame.x,
                   y:frame.y
               }

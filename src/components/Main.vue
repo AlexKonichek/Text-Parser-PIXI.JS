@@ -314,12 +314,13 @@ export default {
         this.symbolParams.forEach(symbol=> {
           this.textures.forEach(texture => {
             if((symbol.x === texture.frame.x) && (symbol.y === texture.frame.y)){
-                console.log(symbol.name)
+                console.log(symbol.height)
                 let params = {
                   name:symbol.name,
                   texture:texture,
                   xoffset:symbol.xoffset,
                   width:symbol.width,
+                  height:symbol.height
                 }
                 symbolsMap.set(symbol.name, params)
             }

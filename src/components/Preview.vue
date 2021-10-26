@@ -16,7 +16,7 @@
 
   </div>
 
-  <button class="btn btn-success btn-lg m-3"  v-on:click="renderSymbols">Render</button>
+  <button v-if="showRenderSymbolsButton" class="btn btn-success btn-lg m-3"  v-on:click="renderSymbols">Render</button>
   <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStagePreview">Clear</button>
 
 </div>
@@ -31,7 +31,7 @@ export default {
     return {
       app:{},
       canvasBackground: 0xffffff,
-      canvasWidths:500,
+      canvasWidths:600,
       canvasHeight:200,
       inputSymbols:"",
       symbolsArr:[],
@@ -42,7 +42,9 @@ export default {
       arrCorrectSymbols: [],
       symbolsArrUpper:[],
       startCoordinateForNextSymbol:0,
-      firstTime: true
+      firstTime: true,
+      spriteBorder:null,
+      showRenderSymbolsButton:false
 
     }
   },
@@ -128,23 +130,30 @@ export default {
       }) */
     },
     addSymbol(currentSymbol) {
+
       console.warn("addSymbol", currentSymbol)
       if(currentSymbol){
         let params = this.symbolsMap.get(currentSymbol)
         console.warn(params)
+
         let spriteContainer = new PIXI.Container()
+
         let symbolSprite = PIXI.Sprite.from(params.texture);
-        if(this.firstTime){
-          spriteContainer.x = this.currentX
-        }else{
-          spriteContainer.x = this.currentX + params.xoffset
-        }
+        spriteContainer.x = this.currentX + params.xoffset
         spriteContainer.y = 0
         spriteContainer.addChild(symbolSprite)
         //this.spritesheetWrapper.addChild(spriteContainer)
+        let spriteSheetBorder = new PIXI.Graphics();
+        spriteSheetBorder.lineStyle(3, 0x000000, 1);
+        spriteSheetBorder.drawRect(0, 0, params.width, params.height);
+        spriteSheetBorder.endFill();
+       // spriteSheetBorder.x = 0;
+        //spriteSheetBorder.y = 0;
+        spriteContainer.addChild(spriteSheetBorder)
         this.app.stage.addChild(spriteContainer)
         this.currentX = spriteContainer.x + params.width
-        this.firstTime = false
+        console.log(spriteContainer)
+
       }
         
         
@@ -188,7 +197,9 @@ export default {
         this.inputSymbols = this.inputSymbols.substring(0, this.inputSymbols.length - 1);
         this.symbolsArr.pop()
       }
+      this.showRenderSymbolsButton = true
     }
+
 
   }
 }

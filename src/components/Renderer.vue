@@ -168,7 +168,12 @@ export default {
       let symbolSprite = PIXI.Sprite.from(texture);
       spriteContainer.x = x
       spriteContainer.y = y
+      let spriteSheetBorder = new PIXI.Graphics();
+      spriteSheetBorder.lineStyle(3, 0x000000, 1);
+      spriteSheetBorder.drawRect(0, 0, texture.orig.width, texture.orig.height);
+      spriteSheetBorder.endFill();
       spriteContainer.addChild(symbolSprite)
+      spriteContainer.addChild(spriteSheetBorder)
       this.spritesheetWrapper.addChild(spriteContainer)
     },
     clearStage() {
