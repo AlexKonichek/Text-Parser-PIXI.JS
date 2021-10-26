@@ -65,6 +65,10 @@
                 >
               </div>
             </div>
+            <div v-if="showRenderer">
+              <input type="checkbox" id="checkbox" v-model="showBorder">
+              <label for="checkbox">Show border</label>
+            </div>
             <Renderer
                 v-if="showRenderer"
                 @texturesIsReady="textures = $event"
@@ -80,6 +84,7 @@
                 :symbolWidth="xadvance"
                 :secondSymbolParams="symbolParamsForCorrectingXOffset"
                 :symbolForCorrectingXOffset="symbolForCorrectingXOffset"
+                :showBorder="showBorder"
             />
 
             <button ref='refresh' class="btn btn-light m-3"  v-on:click="refreshPage">Clear</button>
@@ -174,6 +179,7 @@ export default {
       selectOption1: '.,×0123456789',
       selectOption2: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       showForm:true,
+      showBorder:false,
       showModal:false,
       showCreateXMLButton:false,
       showXadvanceForSmallSymbols:false,

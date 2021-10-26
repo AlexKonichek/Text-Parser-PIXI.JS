@@ -19,10 +19,7 @@
   <button v-if="showRenderSymbolsButton" class="btn btn-success btn-lg m-3"  v-on:click="renderSymbols">Render</button>
   <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStagePreview">Clear</button>
 
-  <div v-if="showRenderSymbolsButton">
-    <input type="checkbox" id="checkbox" v-model="showBorder">
-    <label for="checkbox">Show border</label>
-  </div>
+
 
 </div>
 </template>

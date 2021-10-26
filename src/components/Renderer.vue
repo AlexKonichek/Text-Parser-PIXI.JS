@@ -36,7 +36,7 @@ export default {
       showRenderButton:true
     }
   },
-  props: ["canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbols", "finalSmallXAdvance","comaSymbolParams", "dotIndex","symbolWidth","secondSymbolParams"],
+  props: ["showBorder","canvasHeight", "loadedJSON","loadedPNG","xoffset","showRenderer","jsonHasSmallSymbols", "finalSmallXAdvance","comaSymbolParams", "dotIndex","symbolWidth","secondSymbolParams"],
   computed: {
    
    smallSymbolsXoffset() {
@@ -79,6 +79,12 @@ export default {
     },
   },
   watch:{
+    showBorder: function () {
+      if(this.app.stage) {
+        this.clearStage()
+        this.render(false)
+      }
+    },
     smallSymbolsXoffset: function () {
       console.log(this.smallSymbolsXoffset)
       if(this.app.stage) {
@@ -136,7 +142,7 @@ export default {
       })
     },
     render(jsonHasSmallSymbols) {
-      debugger
+
       console.warn("render")
       this.showRenderButton = false
       this.addCanvasBorder();
@@ -174,7 +180,10 @@ export default {
       spriteSheetBorder.drawRect(0, 0, texture.orig.width, texture.orig.height);
       spriteSheetBorder.endFill();
       spriteContainer.addChild(symbolSprite)
-      spriteContainer.addChild(spriteSheetBorder)
+      if(this.showBorder){
+        spriteContainer.addChild(spriteSheetBorder)
+      }
+
       this.spritesheetWrapper.addChild(spriteContainer)
     },
     clearStage() {
