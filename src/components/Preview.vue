@@ -19,6 +19,11 @@
   <button v-if="showRenderSymbolsButton" class="btn btn-success btn-lg m-3"  v-on:click="renderSymbols">Render</button>
   <button class="btn btn-secondary btn-lg m-3"  v-on:click="clearStagePreview">Clear</button>
 
+  <div v-if="showRenderSymbolsButton">
+    <input type="checkbox" id="checkbox" v-model="showBorder">
+    <label for="checkbox">Show border</label>
+  </div>
+
 </div>
 </template>
 
@@ -44,7 +49,8 @@ export default {
       startCoordinateForNextSymbol:0,
       firstTime: true,
       spriteBorder:null,
-      showRenderSymbolsButton:false
+      showRenderSymbolsButton:false,
+      showBorder:false
 
     }
   },
@@ -71,6 +77,9 @@ export default {
       console.warn("inputSymbols is changed", this.symbolsArr)
       
     },
+    showBorder: function () {
+
+    }
   },
   mounted() {
     this.drawPixi()
@@ -152,9 +161,9 @@ export default {
         spriteSheetBorder.lineStyle(3, 0x000000, 1);
         spriteSheetBorder.drawRect(0, 0, params.width, params.height);
         spriteSheetBorder.endFill();
-       // spriteSheetBorder.x = 0;
-        //spriteSheetBorder.y = 0;
-        spriteContainer.addChild(spriteSheetBorder)
+        if(this.showBorder){
+          spriteContainer.addChild(spriteSheetBorder)
+        }
         this.app.stage.addChild(spriteContainer)
         this.currentX = spriteContainer.x + params.width
         this.firstTime = false
