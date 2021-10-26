@@ -216,7 +216,8 @@ export default {
       imgUrl:null,
       comaParams: {},
       dotIndex:0,
-      symbolForCorrectingXOffset:"S"
+      symbolForCorrectingXOffset:"S",
+      symbolForCorrectingXOffsetDefault:"0"
     }
   },
   watch: {
@@ -358,8 +359,10 @@ export default {
       this.arrSmallSymbolsWidth = []
       this.arrSymbolsWidths = []
       if(!this.symbolsArr.includes(this.symbolForCorrectingXOffset)) {
-        this.symbolForCorrectingXOffset = "0"
+        this.symbolForCorrectingXOffset = this.symbolForCorrectingXOffsetDefault
+
       }
+      console.warn(this.symbolForCorrectingXOffset);
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".":
@@ -377,13 +380,15 @@ export default {
                     this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
                     this.jsonHasSmallSymbols = true
             break;
-          case this.symbolForCorrectingXOffset: 
-                    this.symbolParamsForCorrectingXOffset.width = frame.sourceSize.w
+          case this.symbolForCorrectingXOffset:
+            this.symbolParamsForCorrectingXOffset.symbol = this.symbolForCorrectingXOffset
+                    this.symbolParamsForCorrectingXOffset.width = frame.frame.w
                     this.symbolParamsForCorrectingXOffset.x = frame.frame.x
                     this.symbolParamsForCorrectingXOffset.y = frame.frame.y
+                    console.warn(this.symbolParamsForCorrectingXOffset)
             break;
 
-          default:this.arrSymbolsWidths.push(frame.sourceSize.w);
+          default:this.arrSymbolsWidths.push(frame.frame.w);
                   this.arrSymbolsHeights.push(frame.frame.h)
                   console.log( this.arrSymbolsHeights)
 

@@ -181,8 +181,8 @@ export default {
               }
 
 
-            this.xOffset = (Number(this.xadvanceCurrent)- sourceSize.w) / 2
-            this.yOffset = (Number(this.yadvance)- sourceSize.h) / 2
+            this.xOffset = (Number(this.xadvanceCurrent)- frame.w)
+            this.yOffset = (Number(this.yadvance)- frame.h) / 2
 
             if(this.symbolsArr[index] === this.symbolForCorrectingXOffset){
               console.warn(this.symbolsArr[index],this.xOffset)

@@ -136,6 +136,7 @@ export default {
       })
     },
     render(jsonHasSmallSymbols) {
+      debugger
       console.warn("render")
       this.showRenderButton = false
       this.addCanvasBorder();

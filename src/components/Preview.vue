@@ -139,7 +139,12 @@ export default {
         let spriteContainer = new PIXI.Container()
 
         let symbolSprite = PIXI.Sprite.from(params.texture);
-        spriteContainer.x = this.currentX + params.xoffset
+        if(this.firstTime){
+          spriteContainer.x = this.currentX
+        }else{
+          spriteContainer.x = this.currentX + params.xoffset
+        }
+
         spriteContainer.y = 0
         spriteContainer.addChild(symbolSprite)
         //this.spritesheetWrapper.addChild(spriteContainer)
@@ -152,6 +157,7 @@ export default {
         spriteContainer.addChild(spriteSheetBorder)
         this.app.stage.addChild(spriteContainer)
         this.currentX = spriteContainer.x + params.width
+        this.firstTime = false
         console.log(spriteContainer)
 
       }
