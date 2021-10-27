@@ -136,7 +136,7 @@ export default {
       }) */
     },
     addSymbol(currentSymbol) {
-
+       debugger
       console.warn("addSymbol", currentSymbol)
       if(currentSymbol){
         let params = this.symbolsMap.get(currentSymbol)

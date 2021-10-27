@@ -65,10 +65,11 @@
                 >
               </div>
             </div>
-            <div v-if="showRenderer">
-              <input type="checkbox" id="checkbox" v-model="showBorder">
-              <label for="checkbox">Show border</label>
+            <div v-if="showRenderer" class="form-check mt-3">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="showBorder">
+              <label class="text-white h4" for="exampleCheck1">Show border</label>
             </div>
+
             <Renderer
                 v-if="showRenderer"
                 @texturesIsReady="textures = $event"
