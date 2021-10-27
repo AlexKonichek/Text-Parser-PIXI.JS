@@ -71,7 +71,6 @@ export default {
      }
 
       this.validateSymbolsForm(lastSymbol)
-      //this.addSymbol(lastSymbol)
       console.warn("inputSymbols is changed", this.symbolsArr)
       
     },
@@ -103,6 +102,7 @@ export default {
       let arrDefaultSymbols = []
       this.arrSymbolsCurrencyForDefaultPreview.forEach(defaultSymbol => {
         if(this.symbolsMap.has(defaultSymbol)){
+          console.log(this.symbolsMap.get(defaultSymbol))
           arrDefaultSymbols.push(this.symbolsMap.get(defaultSymbol))
         }
       })
@@ -112,20 +112,22 @@ export default {
         if(a > b) { return 1; }
         return 0;
       })
+      debugger
       arrDefaultSymbols.forEach(symbol => this.addSymbol(symbol.name))
       console.warn(arrDefaultSymbols)
 
     },
     renderSymbols(){
       this.clearStagePreview()
-      this.symbolsArr.forEach(symbol=> {
-        this.addSymbol(symbol)
+      this.symbolsArr.forEach(symbolName=> {
+        this.addSymbol(symbolName)
       })
     },
 
     addSymbol(currentSymbol) {
+
       console.warn("addSymbol", currentSymbol)
-      this.firstTime = true
+
       if(currentSymbol){
         let params = this.symbolsMap.get(currentSymbol)
         console.warn(params)
@@ -158,6 +160,7 @@ export default {
 
     clearStagePreview() {
       console.warn("clearStagePreview")
+      this.firstTime = true
       while(this.app.stage.children[0]) {
         this.app.stage.removeChild(this.app.stage.children[0]);
         this.inputSymbols = []
@@ -167,6 +170,7 @@ export default {
 
     },
     validateSymbolsForm(symbol) {
+
       console.warn("validateSymbolsForm")
       if(!this.symbolsMap.has(symbol)) {
         this.inputSymbols = this.inputSymbols.substring(0, this.inputSymbols.length - 1);
