@@ -47,7 +47,8 @@ export default {
       firstTime: true,
       spriteBorder:null,
       showRenderSymbolsButton:false,
-      showBorder:false
+      showBorder:false,
+      arrSymbolsCurrencyForDefaultPreview: ["U","S","D"],
 
     }
   },
@@ -94,50 +95,37 @@ export default {
         view: canvas,
       })
       this.app.renderer.backgroundColor = 0xffffff
-      //this.addCanvasBorder()
+      this.renderDefaultPreview()
     },
 
-    prepareSymbolsArray (currentSymbol){
-      console.warn("prepareSymbolsArray")
-
+    renderDefaultPreview(){
+      debugger
+      let arrDefaultSymbols = []
+      this.arrSymbolsCurrencyForDefaultPreview.forEach(defaultSymbol => {
+        if(this.symbolsMap.has(defaultSymbol)){
+          arrDefaultSymbols.push(this.symbolsMap.get(defaultSymbol))
+        }
+      })
+      //sort symbols in right order
+      arrDefaultSymbols.sort(function(a, b){
+        if(a < b) { return -1; }
+        if(a > b) { return 1; }
+        return 0;
+      })
+      arrDefaultSymbols.forEach(symbol => this.addSymbol(symbol.name))
+      console.warn(arrDefaultSymbols)
 
     },
     renderSymbols(){
+      this.clearStagePreview()
       this.symbolsArr.forEach(symbol=> {
         this.addSymbol(symbol)
       })
     },
 
-    correctSymbolsCoordinates(){
-      /* let currentX = 0
-      let allXoffset = 0
-      this.itemsArr.forEach((sybmol, index) => {
-        //xoffset = item.xoffset
-        //correcting x coordinate with xoffset
-        allXoffset = allXoffset + sybmol.xoffset
-        //record  new symbols coordinate in array
-        this.arrCorrectSymbols.push({xActual: currentX + allXoffset, x:sybmol.x, y:sybmol.y, symbol: sybmol.symbol})
-        //corect currentX for next itteration
-        currentX = currentX+ sybmol.width
-      })
-      if(this.arrCorrectSymbols.length === this.symbolsArr.length){
-        this.render()
-      }
-      else{
-       return */
-     // }
-    },
-
-    render(){
-     /*  console.warn("render")
-      this.clearStage()
-      this.arrCorrectSymbols.forEach((item,i) => {
-        this.addSymbol(item.width, item.xoffset, item.x, item.y)
-      }) */
-    },
     addSymbol(currentSymbol) {
-       debugger
       console.warn("addSymbol", currentSymbol)
+      this.firstTime = true
       if(currentSymbol){
         let params = this.symbolsMap.get(currentSymbol)
         console.warn(params)
@@ -165,32 +153,7 @@ export default {
         this.currentX = spriteContainer.x + params.width
         this.firstTime = false
         console.log(spriteContainer)
-
       }
-        
-        
-
-      
-      
-    },
-    /* getTextureIndex(x,y) {
-      let index = this.textures.findIndex(texture => texture.frame.x === x && texture.frame.y === y );
-      return index
-    }, */
-    addCanvasBorder() {
-       this.spritesheetWrapper = new PIXI.Container()
-      let spriteSheetBorder = new PIXI.Graphics();
-      spriteSheetBorder.lineStyle(2, 0x000000, 1);
-      spriteSheetBorder.drawRect(0, 0, this.canvasWidths, this.canvasHeight);
-      spriteSheetBorder.endFill();
-      spriteSheetBorder.x = 0;
-      spriteSheetBorder.y = 0;
-      this.spritesheetWrapper.addChild(spriteSheetBorder)
-      this.app.stage.addChild(this.spritesheetWrapper);
-    },
-    clear(){
-      console.warn("clearStage")
-
     },
 
     clearStagePreview() {
@@ -211,8 +174,6 @@ export default {
       }
       this.showRenderSymbolsButton = true
     }
-
-
   }
 }
 
