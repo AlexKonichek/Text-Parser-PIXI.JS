@@ -98,7 +98,6 @@ export default {
     },
 
     renderDefaultPreview(){
-      debugger
       let arrDefaultSymbols = []
       this.arrSymbolsCurrencyForDefaultPreview.forEach(defaultSymbol => {
         if(this.symbolsMap.has(defaultSymbol)){
@@ -112,7 +111,6 @@ export default {
         if(a > b) { return 1; }
         return 0;
       })
-      debugger
       arrDefaultSymbols.forEach(symbol => this.addSymbol(symbol.name))
       console.warn(arrDefaultSymbols)
 

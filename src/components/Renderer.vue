@@ -26,8 +26,6 @@ export default {
       sprites:[],
       textures:[],
       rotation: 0,
-      //width: 1800,
-      //height: 800,
       backgroundColor: 0xFF0000,
       resolution: 1,
       position: 1,
@@ -120,6 +118,7 @@ export default {
       })
       this.app.renderer.backgroundColor = 0xffffff
       this.parse()
+      this.$emit("showPreviewButton", true)
     },
     parse() {
       console.warn("parse")

@@ -2,7 +2,7 @@
   <div>
     <div class="row m-3">
       <div class="col-sm-6">
-        <button class="btn btn-success btn-lg m-3"  v-on:click="showPreview">Show preview</button>
+        <button  v-if="showPreviewButton" class="btn btn-success btn-lg m-3"  v-on:click="showPreview">Show preview</button>
         <Preview v-if="showPreviewComponent"
             :arrSymbolsParams="arrSymbolsParams"
             :textures="textures"
@@ -50,7 +50,7 @@ export default {
       showPreviewComponent:false
     }
   },
-  props: ["symbolForCorrectingXOffset","symbolsMap","dataReady","JSONtext", "symbolsArr", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth", "textures"],
+  props: ["showPreviewButton","symbolForCorrectingXOffset","symbolsMap","dataReady","JSONtext", "symbolsArr", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth", "textures"],
   watch: {
     xoffsetForSymbolCorrectingXAdvance: function(){
       this.$emit("xOffsetForRendererChange",this.xoffsetForSymbolCorrectingXAdvance)
