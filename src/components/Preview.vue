@@ -34,7 +34,7 @@ export default {
       app:{},
       canvasBackground: 0xffffff,
       canvasWidths:600,
-      canvasHeight:200,
+      canvasHeight:500,
       inputSymbols:"",
       symbolsArr:[],
       texturesForRender:[],
@@ -88,7 +88,7 @@ export default {
       let canvas = document.getElementById('pixiPreview')
       this.app = new PIXI.Application({
         width: this.canvasWidths,
-        height: this.textures[0].frame.height+10,
+        height: this.textures[0].orig.height+10,
         antialias: true,
         transparent: true,
         view: canvas,

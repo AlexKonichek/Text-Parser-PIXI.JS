@@ -96,8 +96,8 @@ export default {
       this.font = Object.values(data)[1].image.split(".")[0]
       this.framesArr = Object.values(frames)
       this.framesArr.forEach(frame => {
-        this.framesWidths.push(frame.sourceSize.w)
-        this.framesHeights.push(frame.sourceSize.h)
+        this.framesWidths.push(frame.frame.w)
+        this.framesHeights.push(frame.frame.h)
       })
       this.yadvance = this.maxSymbolHeightFromJSON()
 

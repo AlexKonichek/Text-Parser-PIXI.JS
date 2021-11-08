@@ -330,18 +330,18 @@ export default {
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".":
-                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
                     this.jsonHasSmallSymbols = true
                     this.dotIndex = index
             break;
           case ",": 
-                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
                     this.jsonHasSmallSymbols = true
-                    this.comaParams = {width:frame.sourceSize.w, height:frame.sourceSize.h, x:frame.frame.x, y:frame.frame.y}
+                    this.comaParams = {width:frame.frame.w, height:frame.frame.h, x:frame.frame.x, y:frame.frame.y}
 
             break;
           case "×": 
-                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
                     this.jsonHasSmallSymbols = true
             break;
           case this.symbolForCorrectingXOffset:
