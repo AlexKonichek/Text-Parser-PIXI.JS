@@ -181,7 +181,7 @@ export default {
               }
 
 
-            this.xOffset = (Number(this.xadvanceCurrent)- frame.w)
+            this.xOffset = (Number(this.xadvanceCurrent)- frame.w) /2
             this.yOffset = (Number(this.yadvance)- frame.h) / 2
 
             if(this.symbolsArr[index] === this.symbolForCorrectingXOffset){
@@ -206,8 +206,8 @@ export default {
       this.$emit("symbolParamsIsReady",this.arrSymbolsParams)
 
       //end part of XML file
-      this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent}" /><!--   -->\n`
-      this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent}" /><!--       -->\n`
+      this.XMLText += `    <char id="32" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent * 0.25}" /><!--   -->\n`
+      this.XMLText += `    <char id="9" x="0" y="0" width="0" height="0" xoffset="0" yoffset="0" xadvance="${this.xadvanceCurrent * 0.7}" /><!--       -->\n`
       this.XMLText += `  </chars>
         <kernings count="0">
         </kernings>
