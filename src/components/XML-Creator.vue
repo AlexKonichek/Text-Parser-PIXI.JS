@@ -50,7 +50,7 @@ export default {
       showPreviewComponent:false
     }
   },
-  props: ["showPreviewButton","symbolForCorrectingXOffset","symbolsMap","dataReady","JSONtext", "symbolsArr", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth", "textures"],
+  props: ["trimmed","showPreviewButton","symbolForCorrectingXOffset","symbolsMap","dataReady","JSONtext", "symbolsArr", "finalXAdvance","finalSmallXAdvance", "arrSymbolsWidths", "arrSmallSymbolsWidth", "smallSymbolsXadvance","symbolWidth", "textures"],
   watch: {
     xoffsetForSymbolCorrectingXAdvance: function(){
       this.$emit("xOffsetForRendererChange",this.xoffsetForSymbolCorrectingXAdvance)
@@ -166,12 +166,19 @@ export default {
        //+ Number(this.changeYAdvance)
 
       this.framesArr.forEach(({frame, sourceSize, spriteSourceSize}, index) => {
-
+              let symbolWidth, symbolHeight
+              if(this.trimmed){
+                symbolWidth = frame.w;
+                symbolHeight = frame.h
+              } else {
+                symbolWidth = sourceSize.w;
+                symbolHeight = sourceSize.h
+              }
             //define xadvance for dot,comma or similar small symbol
             //to do add arr of all possibly small symbols and checking if it have a current symbols
             if((this.symbolsArr[index] === "," || this.symbolsArr[index] === "." || this.symbolsArr[index] === "×")) {
                 //this.xadvanceCurrent = this.smallSymbolsXadvance
-                this.yadvance =  sourceSize.h
+                this.yadvance = symbolHeight 
                 this.xadvanceCurrent = this.finalSmallXAdvance
                 }
 
@@ -181,8 +188,8 @@ export default {
               }
 
 
-            this.xOffset = (Number(this.xadvanceCurrent)- frame.w) /2
-            this.yOffset = (Number(this.yadvance)- frame.h) / 2
+            this.xOffset = (Number(this.xadvanceCurrent)- symbolWidth) /2
+            this.yOffset = (Number(this.yadvance)- symbolHeight) / 2
 
             if(this.symbolsArr[index] === this.symbolForCorrectingXOffset){
               console.warn(this.symbolsArr[index],this.xOffset)
@@ -190,7 +197,7 @@ export default {
             }
             
 
-            let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${frame.w}" height="${frame.h}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
+            let row = `    <char id="${this.charCodeArr[index]}" x="${frame.x}" y="${frame.y}" width="${symbolWidth}" height="${symbolHeight}" xoffset="${this.xOffset}" yoffset="${this.yOffset}" xadvance="${this.xadvanceCurrent}" /><!-- ${this.symbolsArr[index]} -->\n`
               this.XMLText += row
 
               let symbolsParams = {

@@ -124,6 +124,7 @@
                        :arrSmallSymbolsWidth="arrSmallSymbolsWidth"
                        :symbolWidth="xadvance"
                        :textures="textures"
+                       :trimmed="trimmed"
                        :symbolForCorrectingXOffset="symbolForCorrectingXOffset"
           />
 
@@ -150,6 +151,7 @@ export default {
         x:0,
         y:0
       },
+      trimmed:true,
       textures:[],
       maxSymbolHeight:null,
       frameNamesArr: [],
@@ -308,6 +310,7 @@ export default {
          let data = JSON.parse(this.loadedJSON)
          let frames = Object.values(data)[0]
          this.framesArr = Object.values(frames)
+         this.trimmed = this.framesArr[0].trimmed
 
        }else{
          throw new Error("JSON not loaded")
@@ -318,7 +321,7 @@ export default {
        let data = JSON.parse(this.loadedJSON)
          let frames = Object.values(data)[0]
          this.symbols = Object.keys(frames).map(key => {return key.split(".")[0];})
-         console.log(this.symbols);
+        
      },
      createSymbolsMap(){
        console.warn("createSymbolsMap",this.symbolParams, this.textures)
@@ -373,7 +376,78 @@ export default {
       if(!this.symbolsArr.includes(this.symbolForCorrectingXOffset)) {
         this.symbolForCorrectingXOffset = "0"
       }
+      if(this.trimmed === true) {
+        this.framesArr.forEach((frame, index) => {
+
+        switch (this.symbolsArr[index]) {
+          case ".":
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.jsonHasSmallSymbols = true
+                    this.dotIndex = index
+            break;
+          case ",": 
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.jsonHasSmallSymbols = true
+                    this.comaParams = {width:frame.frame.w, height:frame.frame.h, x:frame.frame.x, y:frame.frame.y}
+
+            break;
+          case "×": 
+                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.jsonHasSmallSymbols = true
+            break;
+          case this.symbolForCorrectingXOffset: 
+                    this.symbolParamsForCorrectingXOffset.width = frame.frame.w
+                    this.symbolParamsForCorrectingXOffset.x = frame.frame.x
+                    this.symbolParamsForCorrectingXOffset.y = frame.frame.y
+            break;
+
+          default:this.arrSymbolsWidths.push(frame.frame.w);
+                  this.arrSymbolsHeights.push(frame.frame.h)
+                  console.log( this.arrSymbolsHeights)
+
+            break;
+
+        }
+      })
+
+      } else {
+        console.log("sourceSize")
+        this.framesArr.forEach((frame, index) => {
+
+        switch (this.symbolsArr[index]) {
+          case ".":
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbols = true
+                    this.dotIndex = index
+            break;
+          case ",": 
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbols = true
+                    this.comaParams = {width:frame.sourceSize.w, height:frame.sourceSize.h, x:frame.frame.x, y:frame.frame.y}
+
+            break;
+          case "×": 
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
+                    this.jsonHasSmallSymbols = true
+            break;
+          case this.symbolForCorrectingXOffset: 
+                    this.symbolParamsForCorrectingXOffset.width = frame.sourceSize.w
+                    this.symbolParamsForCorrectingXOffset.x = frame.frame.x
+                    this.symbolParamsForCorrectingXOffset.y = frame.frame.y
+            break;
+
+          default:this.arrSymbolsWidths.push(frame.sourceSize.w);
+                  this.arrSymbolsHeights.push(frame.sourceSize.h)
+                  console.log( this.arrSymbolsHeights)
+
+            break;
+
+        }
+      })
+
+      }
       this.framesArr.forEach((frame, index) => {
+
         switch (this.symbolsArr[index]) {
           case ".":
                     this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
