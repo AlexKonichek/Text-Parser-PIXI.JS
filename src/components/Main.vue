@@ -25,12 +25,22 @@
             </div>
            <div v-if="showForm">
              <label  class="label text-white h4" for="Select">Choose symbols set</label>
-             <select class="form-control form-control-lg mb-2" id="Select" v-model="inputSymbols" >
+             <select class="form-control form-control-lg mb-2" id="Select" v-model="inputSymbols" v-on:change="chooseSymbolsHandler" >
                <option  :value="this.selectOption1">{{ this.selectOption1 }}</option>
                <option>{{ this.selectOption2 }}</option>
              </select>
            </div>
-
+<!--            <label class="text-white h4" for="font-family">Font family</label>-->
+<!--            <div class="input-group input-group-lg m-3">-->
+<!--              <input-->
+<!--                  type="text"-->
+<!--                  id="font-family"-->
+<!--                  ref="inputSymbols"-->
+<!--                  class="form-control mr-3"-->
+<!--                  v-model="font"-->
+<!--                  required-->
+<!--              >-->
+<!--            </div>-->
             <label class="text-white h4" for="XAdvance">general xadvance</label>
             <div class="input-group input-group-lg mb-2">
               <input
@@ -55,15 +65,9 @@
                 >
               </div>
             </div>
-            <div v-if="showRenderer" class="form-check mt-3">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1" v-model="showBorder">
-              <label class="text-white h4" for="exampleCheck1">Show border</label>
-            </div>
-
             <Renderer
                 v-if="showRenderer"
                 @texturesIsReady="textures = $event"
-                @showPreviewButton="showPreviewButton = $event"
                 :canvasHeight="maxSymbolHeightModel"
                 :loadedJSON="loadedJSON"
                 :loadedPNG="loadedPNG"
@@ -76,7 +80,6 @@
                 :symbolWidth="xadvance"
                 :secondSymbolParams="symbolParamsForCorrectingXOffset"
                 :symbolForCorrectingXOffset="symbolForCorrectingXOffset"
-                :showBorder="showBorder"
             />
 
             <button ref='refresh' class="btn btn-light m-3"  v-on:click="refreshPage">Clear</button>
@@ -93,13 +96,18 @@
 
           <div v-if="showFrameNamesOrderMessage">
             <h2><b>Please, put symbols in right order or select it from selector under symbols form</b></h2>
+            <ul>
+              <li v-for="symbol in symbols" :key="symbol">
+                {{symbol}}
+              </li>
+            </ul>
           </div>
 
-          <div id="previewImage">
+        <!--  <div id="previewImage">
             <img v-if="showImagePreview" :src="imgUrl" width="500"  />
-          </div>
+          </div>-->
 
-          <button v-if="showCreateXMLButton" class="btn btn-secondary btn-lg m-4"  v-on:click="CreateXML">Create XML</button>
+          <button v-if="showCreateXMLButton" class="btn btn-secondary m-4"  v-on:click="CreateXML">Create XML</button>
           
           <XML_Creator v-if="isDataReady"
                        ref='xml' 
@@ -117,7 +125,6 @@
                        :symbolWidth="xadvance"
                        :textures="textures"
                        :symbolForCorrectingXOffset="symbolForCorrectingXOffset"
-                       :showPreviewButton="showPreviewButton"
           />
 
 
@@ -143,31 +150,36 @@ export default {
         x:0,
         y:0
       },
-
+      textures:[],
+      maxSymbolHeight:null,
+      frameNamesArr: [],
+      isDataReady:false,
+      inputSymbolsArr:[],
       arrSymbolsWidths: [],
       arrSymbolsHeights:[],
+      xAdvance:null,
       arrSmallSymbolsWidth:[],
       allowToCreateXML: false,
-      comaParams: {},
-      checkedSpriteBorder: false,
-      dotIndex:0,
-      framesArr:[],
       finalSmallXAdvance: null,
       finalXAdvance:null,
       font: 'font family',
-      inputSymbols: "",
-      imgUrl:null,
-      isDataReady:false,
-      jsonHasSmallSymbols:false,
-      loadedJSON: '',
-      loadedPNG: {},
-      maxSymbolWidth: undefined,
-      maxSmallSymbolWidth: undefined,
-      maxSymbolHeight:null,
-      selectOption1: '.,×0123456789',
+      comaOrDotExist: false,
+      showLetterSpacing: false,
+      checkedLetterSpasing: false,
+      checkedSpriteBorder: false,
+      charCodesAndNamesArr: [],
+      charCodeArr: [],
+      changeXAdvance: 0,
+      changeYAdvance: 0,
+      coordinatesArr: [],
+      comaAndDotWidthsArr: [],
+      currentXAdvance: 0,
+      dotXAdvance: 0,
+      comaXAdvance: 0,
+      selectOption1: ',.×0123456789',
       selectOption2: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
       showForm:true,
-      showBorder:false,
+      showModal:false,
       showCreateXMLButton:false,
       showXadvanceForSmallSymbols:false,
       showImagePreview:false,
@@ -176,19 +188,41 @@ export default {
       showInputError: false,
       showRenderButton: false,
       showBorderCheckbox: false,
+      showLetterSpacingModeCheckbox: false,
+      showShiftX: false,
+      showTextArea: false,
       showFrameNamesOrderMessage:false,
-      showPreviewButton:false,
+      symbols:[],
       symbolsArr: [],
       symbolParams:[],
       symbolsMap:[],
+      sourceSizeW: 0,
+      sourceSizeH: 0,
       showRenderer: false,
-      symbolForCorrectingXOffset:"D",
-      symbolForCorrectingXOffsetDefault:"0",
-      textures:[],
-      xAdvance:null,
+      framesWidths: [],
+      framesNames: [],
+      //inputSymbols: ",.0123456789×",
+      inputSymbols: "",
+      maxWidth: 1,
+      maxSymbolWidthFromJSON: 0,
+      maxSmallSymbolWidthFromJSON: 0,
+      maxSymbolWidth: undefined,
+      maxSmallSymbolWidth: undefined,
+      maxWidthReady: false,
+      framesArr:[],
+      jsonHasSmallSymbols:false,
+      JSONFile: {},
+      loadedJSON: '',
+      loadedPNG: {},
+      XMLText: '',
+      XMLFileName: '',
       xoffset: 0,
       yoffset: 0,
       yadvance: 0,
+      imgUrl:null,
+      comaParams: {},
+      dotIndex:0,
+      symbolForCorrectingXOffset:"S"
     }
   },
   watch: {
@@ -207,6 +241,7 @@ export default {
     },
     loadedPNG: function () {
       this.showImagePreview = true
+      this.getSymbolsOrder()
     },
     inputSymbols: function () {
       this.symbolsArr = []
@@ -222,6 +257,13 @@ export default {
     },
     maxSmallSymbolWidth: function () {
       this.finalSmallXAdvance = Number(this.maxSmallSymbolWidth)
+    },
+
+    charCodeArr: function () {
+      this.charCodeArr.forEach((charCode, i) => {
+        let charCodeAndName = {[charCode]: this.framesNames[i]}
+        this.charCodesAndNamesArr.push(charCodeAndName)
+      })
     },
 
   },
@@ -266,10 +308,17 @@ export default {
          let data = JSON.parse(this.loadedJSON)
          let frames = Object.values(data)[0]
          this.framesArr = Object.values(frames)
+
        }else{
          throw new Error("JSON not loaded")
        }
        
+     },
+     getSymbolsOrder(){
+       let data = JSON.parse(this.loadedJSON)
+         let frames = Object.values(data)[0]
+         this.symbols = Object.keys(frames).map(key => {return key.split(".")[0];})
+         console.log(this.symbols);
      },
      createSymbolsMap(){
        console.warn("createSymbolsMap",this.symbolParams, this.textures)
@@ -279,13 +328,12 @@ export default {
         this.symbolParams.forEach(symbol=> {
           this.textures.forEach(texture => {
             if((symbol.x === texture.frame.x) && (symbol.y === texture.frame.y)){
-                console.log(symbol.height)
+                console.log(symbol.name)
                 let params = {
                   name:symbol.name,
                   texture:texture,
                   xoffset:symbol.xoffset,
                   width:symbol.width,
-                  height:symbol.height
                 }
                 symbolsMap.set(symbol.name, params)
             }
@@ -323,36 +371,32 @@ export default {
       this.arrSmallSymbolsWidth = []
       this.arrSymbolsWidths = []
       if(!this.symbolsArr.includes(this.symbolForCorrectingXOffset)) {
-        this.symbolForCorrectingXOffset = this.symbolForCorrectingXOffsetDefault
-
+        this.symbolForCorrectingXOffset = "0"
       }
-      console.warn(this.symbolForCorrectingXOffset);
       this.framesArr.forEach((frame, index) => {
         switch (this.symbolsArr[index]) {
           case ".":
-                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
                     this.jsonHasSmallSymbols = true
                     this.dotIndex = index
             break;
           case ",": 
-                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
                     this.jsonHasSmallSymbols = true
-                    this.comaParams = {width:frame.frame.w, height:frame.frame.h, x:frame.frame.x, y:frame.frame.y}
+                    this.comaParams = {width:frame.sourceSize.w, height:frame.sourceSize.h, x:frame.frame.x, y:frame.frame.y}
 
             break;
           case "×": 
-                    this.arrSmallSymbolsWidth.push(frame.frame.w)
+                    this.arrSmallSymbolsWidth.push(frame.sourceSize.w)
                     this.jsonHasSmallSymbols = true
             break;
-          case this.symbolForCorrectingXOffset:
-            this.symbolParamsForCorrectingXOffset.symbol = this.symbolForCorrectingXOffset
-                    this.symbolParamsForCorrectingXOffset.width = frame.frame.w
+          case this.symbolForCorrectingXOffset: 
+                    this.symbolParamsForCorrectingXOffset.width = frame.sourceSize.w
                     this.symbolParamsForCorrectingXOffset.x = frame.frame.x
                     this.symbolParamsForCorrectingXOffset.y = frame.frame.y
-                    console.warn(this.symbolParamsForCorrectingXOffset)
             break;
 
-          default:this.arrSymbolsWidths.push(frame.frame.w);
+          default:this.arrSymbolsWidths.push(frame.sourceSize.w);
                   this.arrSymbolsHeights.push(frame.frame.h)
                   console.log( this.arrSymbolsHeights)
 
@@ -364,7 +408,8 @@ export default {
     },
 
     
-
+    chooseSymbolsHandler(e) {
+    },
     validateSymbolsForm() {
           if(this.symbolsArr.length === this.framesArr.length) {
               this.showInputError = false
